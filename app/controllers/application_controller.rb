@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   require 'csv'
-
+  
   def after_sign_in_path_for(resource)
     mypage_path
   end
