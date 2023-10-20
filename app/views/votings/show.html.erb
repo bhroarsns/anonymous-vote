@@ -3,6 +3,11 @@
 <%= render @voting %>
 
 <div>
+<h2> Result </h2>
+  <%= @voting.count_votes %>
+</div>
+
+<div>
   <%= link_to "Edit this voting", edit_voting_path(@voting) %>
 
   <%= button_to "Destroy this voting", @voting, method: :delete %>

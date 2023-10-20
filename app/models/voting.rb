@@ -20,6 +20,13 @@ class Voting < ApplicationRecord
     self.choices.split("\n")
   end
 
+  def count_votes
+    # Voter (and also owner) should not be able to see the vote counts until the deadline
+    if self.deadline < Time.current
+      self.ballots.group(:choice).count
+    end
+  end
+
   private
     def set_uuid 
       while self.id.blank? || Voting.find_by(id: self.id).present? do
