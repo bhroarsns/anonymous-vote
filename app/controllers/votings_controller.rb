@@ -52,7 +52,7 @@ class VotingsController < ApplicationController
     @voting.destroy!
 
     respond_to do |format|
-      format.html { redirect_to votings_url, notice: "Voting was successfully destroyed." }
+      format.html { redirect_to mypage_path, notice: "Voting was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -65,6 +65,6 @@ class VotingsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def voting_params
-      params.require(:voting).permit(:title, :user_id, :description, :choices, :deadline, :mode, :config)
+      params.require(:voting).permit(:title, :description, :choices, :deadline, :mode, :config).merge(user_id: current_user.id)
     end
 end

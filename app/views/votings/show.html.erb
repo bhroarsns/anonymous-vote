@@ -3,8 +3,9 @@
 <%= render @voting %>
 
 <div>
-  <%= link_to "Edit this voting", edit_voting_path(@voting) %> |
-  <%= link_to "Back to votings", votings_path %>
+  <%= link_to "Edit this voting", edit_voting_path(@voting) %>
 
   <%= button_to "Destroy this voting", @voting, method: :delete %>
 </div>
+
+<%= link_to "Back to mypage", mypage_path %>
