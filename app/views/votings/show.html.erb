@@ -21,6 +21,10 @@
     <%= form.text_field :email %>
     <%= form.submit "Issue ballot" %>
   <% end %>
+  <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
+    <%= form.file_field :file %>
+    <%= form.submit "Issue ballots from CSV" %>
+  <% end %>
 </div>
 
 <%= link_to "Back to mypage", mypage_path %>

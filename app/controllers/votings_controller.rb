@@ -54,7 +54,11 @@ class VotingsController < ApplicationController
   end
 
   def issue
-    @voting.issue_single_ballot(params[:email])
+    if params[:file]
+      @voting.issue_ballots(params[:file])
+    else
+      @voting.issue_single_ballot(params[:email])
+    end
     redirect_to @voting
   end
 

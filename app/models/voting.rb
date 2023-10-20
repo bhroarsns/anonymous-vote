@@ -10,6 +10,12 @@ class Voting < ApplicationRecord
     self.ballots.create!(voter: voter, password: Ballot.create_password)
   end
 
+  def issue_ballots(file)
+    CSV.foreach(file.path) do |row|
+      self.ballots.create!(voter: row[0], password: Ballot.create_password)
+    end
+  end
+
   def get_choices
     self.choices.split("\n")
   end
