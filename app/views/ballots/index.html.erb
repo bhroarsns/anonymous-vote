@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Ballots</h1>
+
+<div id="ballots">
+  <% @ballots.each do |ballot| %>
+    <%= render ballot %>
+    <p>
+      <%= link_to "Show this ballot", ballot %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New ballot", new_ballot_path %>

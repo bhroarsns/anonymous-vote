@@ -1,25 +1,16 @@
 class VotingsController < ApplicationController
   before_action :set_voting, only: %i[ show edit update destroy ]
 
-  # GET /votings or /votings.json
-  def index
-    @votings = Voting.all
-  end
-
-  # GET /votings/1 or /votings/1.json
+  # (method: GET) Show voting page via votings/{uuid}
   def show
   end
 
-  # GET /votings/new
+  # (method: GET) Show voting creation page via votings/new
   def new
     @voting = Voting.new
   end
 
-  # GET /votings/1/edit
-  def edit
-  end
-
-  # POST /votings or /votings.json
+  # (method: POST) Create voting with params
   def create
     @voting = Voting.new(voting_params)
 
@@ -34,7 +25,11 @@ class VotingsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /votings/1 or /votings/1.json
+  # (method: GET) Show voting edit page via votings/edit
+  def edit
+  end
+
+  # (method: PUT/PATCH) Edit voting with params
   def update
     respond_to do |format|
       if @voting.update(voting_params)
@@ -47,23 +42,22 @@ class VotingsController < ApplicationController
     end
   end
 
-  # DELETE /votings/1 or /votings/1.json
+  # (method: DELETE) Delete voting
   def destroy
     @voting.destroy!
 
     respond_to do |format|
+      # redirect to mypage because there is no routing GET "/votings"
       format.html { redirect_to mypage_path, notice: "Voting was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_voting
       @voting = Voting.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def voting_params
       params.require(:voting).permit(:title, :description, :choices, :deadline, :mode, :config).merge(user_id: current_user.id)
     end

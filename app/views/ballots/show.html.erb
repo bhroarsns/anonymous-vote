@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @ballot %>
+
+<div>
+  <%= link_to "Edit this ballot", edit_ballot_path(@ballot) %> |
+  <%= link_to "Back to ballots", ballots_path %>
+
+  <%= button_to "Destroy this ballot", @ballot, method: :delete %>
+</div>

@@ -1,7 +1,15 @@
 Rails.application.routes.draw do
-  resources :votings
   root 'toppage#index'
   get '/mypage', to: "users#mypage"
 
   devise_for :users
+
+  # :index deactivated because user can see all his/her votings via mypage.
+  resources :votings, except: :index do
+    member do
+    end
+  end
+
+  resources :ballots
+
 end
