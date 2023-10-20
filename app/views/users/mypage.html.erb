@@ -3,11 +3,18 @@
 <h1><%= current_user.name %>'s mypage</h1>
 
 <div id="mypage.votings">
-<ul>
+<table border=1>
+  <tr>
+    <th>Title</th>
+    <th>deadline</th>
+  </tr>
   <% current_user.votings.each do |voting|%>
-    <li><%= link_to voting.title, voting_path(voting) %></li>
+    <tr>
+      <th><%= link_to voting.title, voting_path(voting) %></th>
+      <td><%= voting.deadline %></td>
+    </tr>
   <% end %>
-</ul>
+</table>
 
 <%= link_to "Create new voting", new_voting_path %>
 </div>
