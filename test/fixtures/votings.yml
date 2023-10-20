@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  user: one
+  description: MyText
+  choices: MyText
+  deadline: 2023-10-20 16:41:12
+  mode: MyString
+  config: MyText
+
+two:
+  title: MyString
+  user: two
+  description: MyText
+  choices: MyText
+  deadline: 2023-10-20 16:41:12
+  mode: MyString
+  config: MyText
