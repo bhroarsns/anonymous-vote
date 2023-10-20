@@ -33,7 +33,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_20_074112) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_table "votings", force: :cascade do |t|
+  create_table "votings", id: :string, force: :cascade do |t|
     t.string "title"
     t.integer "user_id", null: false
     t.text "description"
