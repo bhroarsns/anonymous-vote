@@ -13,7 +13,7 @@
 ActiveRecord::Schema[7.1].define(version: 2023_10_20_104621) do
   create_table "ballots", force: :cascade do |t|
     t.string "voting_id", null: false
-    t.string "voter"
+    t.string "voter", null: false
     t.string "password_digest"
     t.string "choice"
     t.datetime "exp"
