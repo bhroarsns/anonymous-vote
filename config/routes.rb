@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   # :index deactivated because user can see all his/her votings via mypage.
   resources :votings, except: :index do
     member do
+      post 'issue'
     end
   end
 

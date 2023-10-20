@@ -49,10 +49,11 @@ class BallotsController < ApplicationController
 
   # DELETE /ballots/1 or /ballots/1.json
   def destroy
+    @voting = @ballot.voting
     @ballot.destroy!
 
     respond_to do |format|
-      format.html { redirect_to ballots_url, notice: "Ballot was successfully destroyed." }
+      format.html { redirect_to @voting, notice: "Ballot was successfully destroyed." }
       format.json { head :no_content }
     end
   end

@@ -8,4 +8,19 @@
   <%= button_to "Destroy this voting", @voting, method: :delete %>
 </div>
 
+<div id="voting.ballots">
+  <table border=1>
+    <% @voting.ballots.each do |ballot| %>
+      <tr>
+        <th><%= ballot.voter %></th>
+        <td><%= link_to "Delete this ballot", ballot, data: { turbo_method: :delete } %></td>
+      </tr>
+    <% end %>
+  </table>
+  <%= form_with url: issue_voting_path(@voting) do |form| %>
+    <%= form.text_field :email %>
+    <%= form.submit "Issue ballot" %>
+  <% end %>
+</div>
+
 <%= link_to "Back to mypage", mypage_path %>

@@ -1,11 +1,13 @@
 class Voting < ApplicationRecord
   # Voting is responsible for issuing ballots, validating vote choice, counting votes.
   belongs_to :user
+  has_many :ballots, dependent: :destroy
 
   # Set random uuid as voting id to hide from outsider.
   before_create :set_uuid
 
-  def get_ballot(voter, password)
+  def issue_single_ballot(voter)
+    self.ballots.create!(voter: voter, password: Ballot.create_password)
   end
 
   def get_choices

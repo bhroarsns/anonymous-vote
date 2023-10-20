@@ -1,5 +1,5 @@
 class VotingsController < ApplicationController
-  before_action :set_voting, only: %i[ show edit update destroy ]
+  before_action :set_voting, only: %i[ show edit update destroy issue ]
 
   # (method: GET) Show voting page via votings/{uuid}
   def show
@@ -51,6 +51,11 @@ class VotingsController < ApplicationController
       format.html { redirect_to mypage_path, notice: "Voting was successfully destroyed." }
       format.json { head :no_content }
     end
+  end
+
+  def issue
+    @voting.issue_single_ballot(params[:email])
+    redirect_to @voting
   end
 
   private

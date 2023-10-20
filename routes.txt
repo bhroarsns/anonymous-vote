@@ -1,12 +1,4 @@
                                   Prefix Verb   URI Pattern                                                                                       Controller#Action
-                                 votings GET    /votings(.:format)                                                                                votings#index
-                                         POST   /votings(.:format)                                                                                votings#create
-                              new_voting GET    /votings/new(.:format)                                                                            votings#new
-                             edit_voting GET    /votings/:id/edit(.:format)                                                                       votings#edit
-                                  voting GET    /votings/:id(.:format)                                                                            votings#show
-                                         PATCH  /votings/:id(.:format)                                                                            votings#update
-                                         PUT    /votings/:id(.:format)                                                                            votings#update
-                                         DELETE /votings/:id(.:format)                                                                            votings#destroy
                                     root GET    /                                                                                                 toppage#index
                                   mypage GET    /mypage(.:format)                                                                                 users#mypage
                         new_user_session GET    /users/sign_in(.:format)                                                                          devise/sessions#new
@@ -30,6 +22,22 @@
                          new_user_unlock GET    /users/unlock/new(.:format)                                                                       devise/unlocks#new
                              user_unlock GET    /users/unlock(.:format)                                                                           devise/unlocks#show
                                          POST   /users/unlock(.:format)                                                                           devise/unlocks#create
+                            issue_voting GET    /votings/:id/issue(.:format)                                                                      votings#issue
+                                 votings POST   /votings(.:format)                                                                                votings#create
+                              new_voting GET    /votings/new(.:format)                                                                            votings#new
+                             edit_voting GET    /votings/:id/edit(.:format)                                                                       votings#edit
+                                  voting GET    /votings/:id(.:format)                                                                            votings#show
+                                         PATCH  /votings/:id(.:format)                                                                            votings#update
+                                         PUT    /votings/:id(.:format)                                                                            votings#update
+                                         DELETE /votings/:id(.:format)                                                                            votings#destroy
+                                 ballots GET    /ballots(.:format)                                                                                ballots#index
+                                         POST   /ballots(.:format)                                                                                ballots#create
+                              new_ballot GET    /ballots/new(.:format)                                                                            ballots#new
+                             edit_ballot GET    /ballots/:id/edit(.:format)                                                                       ballots#edit
+                                  ballot GET    /ballots/:id(.:format)                                                                            ballots#show
+                                         PATCH  /ballots/:id(.:format)                                                                            ballots#update
+                                         PUT    /ballots/:id(.:format)                                                                            ballots#update
+                                         DELETE /ballots/:id(.:format)                                                                            ballots#destroy
         turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede
         turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                             turbo/native/navigation#resume
        turbo_refresh_historical_location GET    /refresh_historical_location(.:format)                                                            turbo/native/navigation#refresh
