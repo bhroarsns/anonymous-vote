@@ -4,6 +4,11 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting page via votings/{uuid}
   def show
     @ballot = @voting.get_ballot(voter: params[:v], password: params[:p])
+
+    unless (current_user == @voting.user) || @ballot
+      raise ActionController::RoutingError.new('Not Found')
+    end
+
     @result = @voting.count_votes
   end
 
@@ -76,7 +81,7 @@ class VotingsController < ApplicationController
 
   def deliver_all
     authorize @voting
-    
+
     @voting.ballots.where(is_delivered: nil).each do |ballot|
       BallotMailer.with(ballot: ballot, exp: params[:exp]).ballot.deliver_later
       ballot.update(is_delivered: true)

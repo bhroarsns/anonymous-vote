@@ -1,23 +1,21 @@
-<% if (current_user == @voting.user) || @ballot %>
-  <p style="color: green"><%= notice %></p>
+<p style="color: green"><%= notice %></p>
 
-  <%= render @voting %>
+<%= render @voting %>
 
-  <div>
-  <h3> Result </h3>
-    <% if @result %>
-      <table border=1>
-        <% @result.each do |choice, num| %>
-          <tr>
-            <th><%= format_choice(choice) %></th><td><%= num %></td>
-          </tr>
-        <% end %>
-      </table>
-    <% else %>
-      *Currently hidden*
-    <% end %>
-  </div>
-<% end %>
+<div>
+<h3> Result </h3>
+  <% if @result %>
+    <table border=1>
+      <% @result.each do |choice, num| %>
+        <tr>
+          <th><%= format_choice(choice) %></th><td><%= num %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    *Currently hidden*
+  <% end %>
+</div>
 
 <% if @ballot %>
   <% if @ballot.expired? %>
