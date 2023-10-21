@@ -21,7 +21,12 @@
 
 <% if @ballot %>
   <% if @ballot.expired? %>
-    expired
+    <% if @ballot.exp %>
+      Your ballot is expired.
+      <%= button_to "Deliver again", deliver_ballot_path(@ballot) %>
+    <% else %>
+      <%= button_to "Get password to vote", deliver_ballot_path(@ballot) %>
+    <% end %>
   <% else %>
     valid
   <% end %>
@@ -40,7 +45,7 @@
         <% @voting.ballots.each do |ballot| %>
           <tr>
             <th><%= ballot.voter %></th>
-            <td><%= delivery_status(ballot.is_delivered) %></td>
+            <td><% if ballot.is_delivered %>Delivered<% else %><%= button_to "Deliver this ballot", deliver_ballot_path(ballot) %><% end %></td>
             <td><%= link_to "Delete this ballot", ballot, data: { turbo_method: :delete } %></td>
           </tr>
         <% end %>
@@ -56,7 +61,10 @@
         <%= form.submit "Issue ballots from CSV" %>
       <% end %>
 
-      <%= button_to "Deliver all undelivered ballots", deliver_all_voting_path(@voting) %>
+      <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
+        <%= form.date_field :exp, :include_blank => true %>
+        <%= form.submit "Deliver all undelivered ballots" %>
+      <% end %>
     </div>
 
     <%= link_to "Back to mypage", mypage_path %>

@@ -60,8 +60,8 @@ class BallotsController < ApplicationController
 
   def deliver
     BallotMailer.with(ballot: @ballot, exp: params[:exp]).ballot.deliver_later
-    ballot.update(is_delivered: true)
-    ballot.save
+    @ballot.update(is_delivered: true)
+    @ballot.save
   end
 
   private
