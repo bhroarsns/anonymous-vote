@@ -1,37 +1,43 @@
-<p style="color: green"><%= notice %></p>
+<% if (current_user == @voting.user) || @ballot %>
+  <p style="color: green"><%= notice %></p>
 
-<%= render @voting %>
+  <%= render @voting %>
 
-<div>
-<h2> Result </h2>
-  <%= @voting.count_votes %>
-</div>
+  <div>
+  <h2> Result </h2>
+    <%= @voting.count_votes %>
+  </div>
+<% end %>
 
-<div>
-  <%= link_to "Edit this voting", edit_voting_path(@voting) %>
+<% if current_user == @voting.user %>
+  <div id="console">
+    <div>
+      <%= link_to "Edit this voting", edit_voting_path(@voting) %>
 
-  <%= button_to "Destroy this voting", @voting, method: :delete %>
-</div>
+      <%= button_to "Destroy this voting", @voting, method: :delete %>
+    </div>
 
-<div id="voting.ballots">
-  <table border=1>
-    <% @voting.ballots.each do |ballot| %>
-      <tr>
-        <th><%= ballot.voter %></th>
-        <td><%= link_to "Delete this ballot", ballot, data: { turbo_method: :delete } %></td>
-      </tr>
-    <% end %>
-  </table>
+    <div id="voting.ballots">
+      <table border=1>
+        <% @voting.ballots.each do |ballot| %>
+          <tr>
+            <th><%= ballot.voter %></th>
+            <td><%= link_to "Delete this ballot", ballot, data: { turbo_method: :delete } %></td>
+          </tr>
+        <% end %>
+      </table>
 
-  <%= form_with url: issue_voting_path(@voting) do |form| %>
-    <%= form.email_field :email %>
-    <%= form.submit "Issue ballot" %>
-  <% end %>
-  
-  <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
-    <%= form.file_field :file %>
-    <%= form.submit "Issue ballots from CSV" %>
-  <% end %>
-</div>
+      <%= form_with url: issue_voting_path(@voting) do |form| %>
+        <%= form.email_field :email %>
+        <%= form.submit "Issue ballot" %>
+      <% end %>
+      
+      <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
+        <%= form.file_field :file %>
+        <%= form.submit "Issue ballots from CSV" %>
+      <% end %>
+    </div>
 
-<%= link_to "Back to mypage", mypage_path %>
+    <%= link_to "Back to mypage", mypage_path %>
+  </div>
+<% end %>

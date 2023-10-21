@@ -1,10 +1,10 @@
 class VotingPolicy < ApplicationPolicy
   def new?
-    owner_signed_in?
+    user
   end
 
   def create?
-    owner_signed_in?
+    user
   end
 
   def edit?
@@ -25,6 +25,6 @@ class VotingPolicy < ApplicationPolicy
 
   private
     def owner_signed_in?
-      user && (user.id == record.user_id)
+      user == record.user
     end
 end

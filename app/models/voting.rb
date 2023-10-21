@@ -16,6 +16,14 @@ class Voting < ApplicationRecord
     end
   end
 
+  def get_ballot(params)
+    # Check if given voter is assigned to this voting
+    ballot = self.ballots.find_by(voter: params[:voter])
+    
+    # Authentication is done at this point to prohibit attackers from getting information about assigned voter
+    ballot && ballot.authenticate(params[:password])
+  end
+
   def get_choices
     self.choices.split("\n")
   end
