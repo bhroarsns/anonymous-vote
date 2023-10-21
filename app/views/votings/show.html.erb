@@ -9,6 +9,12 @@
   </div>
 <% end %>
 
+<% if @ballot && @ballot.valid? %>
+  valid
+<% else %>
+  expired
+<% end %>
+
 <% if current_user == @voting.user %>
   <div id="console">
     <div>

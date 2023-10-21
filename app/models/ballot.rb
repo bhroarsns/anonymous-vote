@@ -8,6 +8,10 @@ class Ballot < ApplicationRecord
   # use bcrypt to activate :authenticate
   has_secure_password
 
+  def valid?
+    self.exp && (self.exp < Time.current)
+  end
+
   # Algorithm for generating password is cupsuled because it's subject to change
   def self.create_password
     SecureRandom.alphanumeric(30)
