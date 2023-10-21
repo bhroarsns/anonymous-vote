@@ -1,22 +1,23 @@
 <p style="color: green"><%= notice %></p>
 
-<h1><%= current_user.name %>'s mypage</h1>
+<h1>マイページ <%= current_user.name %></h1>
 
 <div id="mypage.votings">
-<table class="table">
-  <tr>
-    <th>Title</th>
-    <th>deadline</th>
-  </tr>
-  <% current_user.votings.each do |voting|%>
-    <tr>
-      <th><%= link_to voting.title, voting_path(voting) %></th>
-      <td><%= voting.deadline %></td>
-    </tr>
-  <% end %>
-</table>
-
-<%= link_to "Create new voting", new_voting_path %>
+  <table class="table">
+    <thead>
+      <th></th><th>説明</th><th>締切</th>
+    </thead>
+    <tbody>
+      <% current_user.votings.order(deadline: "DESC").each do |voting|%>
+        <tr>
+          <th><%= link_to voting.title, voting_path(voting) %></th>
+          <td><%= voting.description[0,30] %></td>
+          <td><%= l voting.deadline, format: :short %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= link_to "Create new voting", new_voting_path, class: "btn btn-primary" %>
 </div>
 
 <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete } %>

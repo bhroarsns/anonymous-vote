@@ -47,8 +47,12 @@ gem "bootsnap", require: false
 gem "pundit"
 gem "devise"
 gem "roo"
+gem 'bootstrap'
 gem 'bootstrap-sass'
 gem "sassc-rails"
+gem 'jquery-rails'
+
+gem 'rails-i18n'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

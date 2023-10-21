@@ -49,6 +49,11 @@ class BallotsController < ApplicationController
       @ballot.update(is_delivered: true)
       @ballot.save
     end
+
+    respond_to do |format|
+      format.html { redirect_back_or_to @ballot.voting, notice: "Ballot was successfully delivered." }
+      format.json { head :no_content }
+    end
   end
 
   private
