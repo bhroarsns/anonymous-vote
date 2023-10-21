@@ -1,5 +1,5 @@
 class BallotsController < ApplicationController
-  before_action :set_ballot, only: %i[ show edit update destroy ]
+  before_action :set_ballot, only: %i[ show edit update destroy deliver ]
 
   # GET /ballots or /ballots.json
   def index
@@ -56,6 +56,10 @@ class BallotsController < ApplicationController
       format.html { redirect_to @voting, notice: "Ballot was successfully destroyed." }
       format.json { head :no_content }
     end
+  end
+
+  def deliver
+    BallotMailer.with(ballot: @ballot, exp: Time.current).ballot.deliver_later
   end
 
   private

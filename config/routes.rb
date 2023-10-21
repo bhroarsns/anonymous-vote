@@ -11,6 +11,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :ballots
+  resources :ballots do
+    member do
+      post 'deliver'
+    end
+  end
 
 end

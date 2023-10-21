@@ -22,7 +22,7 @@
                          new_user_unlock GET    /users/unlock/new(.:format)                                                                       devise/unlocks#new
                              user_unlock GET    /users/unlock(.:format)                                                                           devise/unlocks#show
                                          POST   /users/unlock(.:format)                                                                           devise/unlocks#create
-                            issue_voting GET    /votings/:id/issue(.:format)                                                                      votings#issue
+                            issue_voting POST   /votings/:id/issue(.:format)                                                                      votings#issue
                                  votings POST   /votings(.:format)                                                                                votings#create
                               new_voting GET    /votings/new(.:format)                                                                            votings#new
                              edit_voting GET    /votings/:id/edit(.:format)                                                                       votings#edit
@@ -30,6 +30,7 @@
                                          PATCH  /votings/:id(.:format)                                                                            votings#update
                                          PUT    /votings/:id(.:format)                                                                            votings#update
                                          DELETE /votings/:id(.:format)                                                                            votings#destroy
+                          deliver_ballot POST   /ballots/:id/deliver(.:format)                                                                    ballots#deliver
                                  ballots GET    /ballots(.:format)                                                                                ballots#index
                                          POST   /ballots(.:format)                                                                                ballots#create
                               new_ballot GET    /ballots/new(.:format)                                                                            ballots#new
