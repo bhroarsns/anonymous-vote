@@ -1,0 +1,2 @@
+class BallotPolicy < ApplicationPolicy
+end

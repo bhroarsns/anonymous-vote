@@ -7,11 +7,13 @@ class VotingsController < ApplicationController
 
   # (method: GET) Show voting creation page via votings/new
   def new
+    authorize Voting
     @voting = Voting.new
   end
 
   # (method: POST) Create voting with params
   def create
+    authorize Voting
     @voting = Voting.new(voting_params)
 
     respond_to do |format|
@@ -25,12 +27,14 @@ class VotingsController < ApplicationController
     end
   end
 
-  # (method: GET) Show voting edit page via votings/edit
+  # (method: GET) Show voting edit page via votings/{uuid}/edit
   def edit
+    authorize @voting
   end
 
   # (method: PUT/PATCH) Edit voting with params
   def update
+    authorize @voting
     respond_to do |format|
       if @voting.update(voting_params)
         format.html { redirect_to voting_url(@voting), notice: "Voting was successfully updated." }
@@ -44,6 +48,7 @@ class VotingsController < ApplicationController
 
   # (method: DELETE) Delete voting
   def destroy
+    authorize @voting
     @voting.destroy!
 
     respond_to do |format|
@@ -54,6 +59,7 @@ class VotingsController < ApplicationController
   end
 
   def issue
+    authorize @voting
     if params[:file]
       @voting.issue_ballots(params[:file])
     else
