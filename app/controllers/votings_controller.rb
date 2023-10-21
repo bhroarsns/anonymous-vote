@@ -4,6 +4,7 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting page via votings/{uuid}
   def show
     @ballot = @voting.get_ballot(voter: params[:v], password: params[:p])
+    @result = @voting.count_votes
   end
 
   # (method: GET) Show voting creation page via votings/new

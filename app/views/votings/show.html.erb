@@ -4,8 +4,18 @@
   <%= render @voting %>
 
   <div>
-  <h2> Result </h2>
-    <%= @voting.count_votes %>
+  <h3> Result </h3>
+    <% if @result %>
+      <table border=1>
+        <% @result.each do |choice, num| %>
+          <tr>
+            <th><%= format_choice(choice) %></th><td><%= num %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      *Currently hidden*
+    <% end %>
   </div>
 <% end %>
 
