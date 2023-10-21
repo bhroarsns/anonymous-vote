@@ -6,6 +6,7 @@ class CreateBallots < ActiveRecord::Migration[7.1]
       t.string :password_digest
       t.string :choice
       t.datetime :exp
+      t.boolean :is_delivered
 
       t.timestamps
     end

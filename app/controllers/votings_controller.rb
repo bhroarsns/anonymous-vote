@@ -1,5 +1,5 @@
 class VotingsController < ApplicationController
-  before_action :set_voting, only: %i[ show edit update destroy issue ]
+  before_action :set_voting, only: %i[ show edit update destroy issue deliver_all ]
 
   # (method: GET) Show voting page via votings/{uuid}
   def show
@@ -70,6 +70,21 @@ class VotingsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to @voting, notice: "Voter was successfully added."}
+      format.json { head :no_content }
+    end
+  end
+
+  def deliver_all
+    authorize @voting
+    
+    @voting.ballots.where(is_delivered: nil).each do |ballot|
+      BallotMailer.with(ballot: ballot, exp: params[:exp]).ballot.deliver_later
+      ballot.update(is_delivered: true)
+      ballot.save
+    end
+
+    respond_to do |format|
+      format.html { redirect_to @voting, notice: "Ballots are successfully delivered."}
       format.json { head :no_content }
     end
   end

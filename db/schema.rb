@@ -17,6 +17,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_20_104621) do
     t.string "password_digest"
     t.string "choice"
     t.datetime "exp"
+    t.boolean "is_delivered"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["voting_id"], name: "index_ballots_on_voting_id"

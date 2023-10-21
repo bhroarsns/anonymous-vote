@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :votings, except: :index do
     member do
       post 'issue'
+      post 'deliver_all'
     end
   end
 

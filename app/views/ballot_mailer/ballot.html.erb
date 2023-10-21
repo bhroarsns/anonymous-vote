@@ -6,7 +6,11 @@
   <body>
     <h1>Ballot for <%= @address %></h1>
     <p>
-      Vote now from this <%= link_to "link", @url %>. Expiration date of this link is set to <%= @exp %>.
+      <% if @exp %>
+        Vote now from this <%= link_to "link", @url %>. Expiration date of this link is set to <%= @exp %>.
+      <% else %>
+        Get voting password from this <%= link_to "link", @url %>.
+      <% end %>
     </p>
     <p>
       In the case this email is unexpected, please contact us from here.

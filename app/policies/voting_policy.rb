@@ -23,6 +23,10 @@ class VotingPolicy < ApplicationPolicy
     owner_signed_in?
   end
 
+  def deliver_all?
+    owner_signed_in?
+  end
+
   private
     def owner_signed_in?
       user == record.user

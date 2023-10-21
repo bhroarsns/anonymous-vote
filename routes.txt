@@ -23,6 +23,7 @@
                              user_unlock GET    /users/unlock(.:format)                                                                           devise/unlocks#show
                                          POST   /users/unlock(.:format)                                                                           devise/unlocks#create
                             issue_voting POST   /votings/:id/issue(.:format)                                                                      votings#issue
+                      deliver_all_voting POST   /votings/:id/deliver_all(.:format)                                                                votings#deliver_all
                                  votings POST   /votings(.:format)                                                                                votings#create
                               new_voting GET    /votings/new(.:format)                                                                            votings#new
                              edit_voting GET    /votings/:id/edit(.:format)                                                                       votings#edit

@@ -40,7 +40,7 @@
         <% @voting.ballots.each do |ballot| %>
           <tr>
             <th><%= ballot.voter %></th>
-            <td><%= button_to "Deliver this ballot", deliver_ballot_path(ballot) %></td>
+            <td><%= delivery_status(ballot.is_delivered) %></td>
             <td><%= link_to "Delete this ballot", ballot, data: { turbo_method: :delete } %></td>
           </tr>
         <% end %>
@@ -55,6 +55,8 @@
         <%= form.file_field :file %>
         <%= form.submit "Issue ballots from CSV" %>
       <% end %>
+
+      <%= button_to "Deliver all undelivered ballots", deliver_all_voting_path(@voting) %>
     </div>
 
     <%= link_to "Back to mypage", mypage_path %>
