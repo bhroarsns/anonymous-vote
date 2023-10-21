@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :ballots do
+  resources :ballots, only: [:create, :update, :destroy] do
     member do
       post 'deliver'
     end

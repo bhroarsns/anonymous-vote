@@ -32,12 +32,8 @@
                                          PUT    /votings/:id(.:format)                                                                            votings#update
                                          DELETE /votings/:id(.:format)                                                                            votings#destroy
                           deliver_ballot POST   /ballots/:id/deliver(.:format)                                                                    ballots#deliver
-                                 ballots GET    /ballots(.:format)                                                                                ballots#index
-                                         POST   /ballots(.:format)                                                                                ballots#create
-                              new_ballot GET    /ballots/new(.:format)                                                                            ballots#new
-                             edit_ballot GET    /ballots/:id/edit(.:format)                                                                       ballots#edit
-                                  ballot GET    /ballots/:id(.:format)                                                                            ballots#show
-                                         PATCH  /ballots/:id(.:format)                                                                            ballots#update
+                                 ballots POST   /ballots(.:format)                                                                                ballots#create
+                                  ballot PATCH  /ballots/:id(.:format)                                                                            ballots#update
                                          PUT    /ballots/:id(.:format)                                                                            ballots#update
                                          DELETE /ballots/:id(.:format)                                                                            ballots#destroy
         turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede

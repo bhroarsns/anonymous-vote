@@ -24,9 +24,9 @@
   <% if @ballot.expired? %>
     <% if @ballot.exp %>
       Your ballot is expired.
-      <%= button_to "Deliver again", deliver_ballot_path(@ballot) %>
+      <%= button_to "Deliver again", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
     <% else %>
-      <%= button_to "Get password to vote", deliver_ballot_path(@ballot) %>
+      <%= button_to "Get password to vote", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
     <% end %>
   <% else %>
     <%= form_with url: @ballot, method: :put do |form|%>

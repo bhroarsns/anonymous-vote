@@ -1,27 +1,10 @@
 class BallotsController < ApplicationController
-  before_action :set_ballot, only: %i[ show edit update destroy deliver ]
+  before_action :set_ballot, only: %i[ update destroy deliver ]
   before_action :set_voting, only: %i[ update destroy ]
-
-  # GET /ballots or /ballots.json
-  def index
-    @ballots = Ballot.all
-  end
-
-  # GET /ballots/1 or /ballots/1.json
-  def show
-  end
-
-  # GET /ballots/new
-  def new
-    @ballot = Ballot.new
-  end
-
-  # GET /ballots/1/edit
-  def edit
-  end
 
   # POST /ballots or /ballots.json
   def create
+    authorize Ballot
     @ballot = Ballot.new(ballot_params)
 
     respond_to do |format|
@@ -36,19 +19,22 @@ class BallotsController < ApplicationController
   end
 
   def update
-    respond_to do |format|
-      if @ballot.update(choice: params[:choice])
-        format.html { redirect_back_or_to @voting, notice: "Your vote was accepted." }
-        format.json { render :show, status: :ok, location: @ballot }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @ballot.errors, status: :unprocessable_entity }
+    if authorized_voter?
+      respond_to do |format|
+        if @ballot.update(choice: params[:choice])
+          format.html { redirect_back_or_to @voting, notice: "Your vote was accepted." }
+          format.json { render :show, status: :ok, location: @ballot }
+        else
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @ballot.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
 
   # DELETE /ballots/1 or /ballots/1.json
   def destroy
+    authorize @ballot
     @ballot.destroy!
 
     respond_to do |format|
@@ -58,9 +44,11 @@ class BallotsController < ApplicationController
   end
 
   def deliver
-    BallotMailer.with(ballot: @ballot, exp: params[:exp]).ballot.deliver_later
-    @ballot.update(is_delivered: true)
-    @ballot.save
+    if (current_user == @ballot.voting.user) || authorized_voter?
+      BallotMailer.with(ballot: @ballot, exp: params[:exp]).ballot.deliver_later
+      @ballot.update(is_delivered: true)
+      @ballot.save
+    end
   end
 
   private
@@ -71,6 +59,10 @@ class BallotsController < ApplicationController
 
     def set_voting
       @voting = @ballot.voting
+    end
+
+    def authorized_voter?
+      (@ballot.voter == params[:v]) && (@ballot.authenticate(params[:p]))
     end
 
     # Only allow a list of trusted parameters through.

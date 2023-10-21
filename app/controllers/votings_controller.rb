@@ -9,6 +9,8 @@ class VotingsController < ApplicationController
       raise ActionController::RoutingError.new('Not Found')
     end
 
+    @voter = params[:v]
+    @password = params[:p]
     @result = @voting.count_votes
   end
 
