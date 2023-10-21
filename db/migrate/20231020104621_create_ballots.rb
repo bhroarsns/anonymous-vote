@@ -1,6 +1,6 @@
 class CreateBallots < ActiveRecord::Migration[7.1]
   def change
-    create_table :ballots do |t|
+    create_table :ballots, id: :string do |t|
       t.references :voting, null: false, foreign_key: true, type: :string
       t.string :voter, null:false
       t.string :password_digest

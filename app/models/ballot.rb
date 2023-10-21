@@ -4,6 +4,9 @@ class Ballot < ApplicationRecord
   belongs_to :voting
   validates :voter, presence: true, uniqueness: {scope: :voting_id}
 
+  # Set random uuid as voting id to hide from outsider.
+  before_create :set_uuid
+
   # use bcrypt to activate :authenticate
   has_secure_password
 
@@ -25,6 +28,13 @@ class Ballot < ApplicationRecord
 
   # Algorithm for generating password is cupsuled because it's subject to change
   def self.create_password
-    SecureRandom.alphanumeric(30)
+    SecureRandom.alphanumeric(40)
   end
+
+  private
+    def set_uuid 
+      while self.id.blank? || Voting.find_by(id: self.id).present? do
+        self.id = SecureRandom.uuid
+      end
+    end
 end
