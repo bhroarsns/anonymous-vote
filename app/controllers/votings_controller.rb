@@ -59,7 +59,11 @@ class VotingsController < ApplicationController
     else
       @voting.issue_single_ballot(params[:email])
     end
-    redirect_to @voting
+
+    respond_to do |format|
+      format.html { redirect_to @voting, notice: "Voter was successfully added."}
+      format.json { head :no_content }
+    end
   end
 
   private
