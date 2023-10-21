@@ -20,7 +20,7 @@ class Ballot < ApplicationRecord
   # end
 
   def expired?
-    !self.exp || (self.exp > Time.current)
+    !self.exp || (self.exp < Time.current)
   end
 
   # Algorithm for generating password is cupsuled because it's subject to change

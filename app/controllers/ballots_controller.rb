@@ -1,5 +1,6 @@
 class BallotsController < ApplicationController
   before_action :set_ballot, only: %i[ show edit update destroy deliver ]
+  before_action :set_voting, only: %i[ update destroy ]
 
   # GET /ballots or /ballots.json
   def index
@@ -34,11 +35,10 @@ class BallotsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /ballots/1 or /ballots/1.json
   def update
     respond_to do |format|
-      if @ballot.update(ballot_params)
-        format.html { redirect_to ballot_url(@ballot), notice: "Ballot was successfully updated." }
+      if @ballot.update(choice: params[:choice])
+        format.html { redirect_back_or_to @voting, notice: "Your vote was accepted." }
         format.json { render :show, status: :ok, location: @ballot }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -49,7 +49,6 @@ class BallotsController < ApplicationController
 
   # DELETE /ballots/1 or /ballots/1.json
   def destroy
-    @voting = @ballot.voting
     @ballot.destroy!
 
     respond_to do |format|
@@ -68,6 +67,10 @@ class BallotsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_ballot
       @ballot = Ballot.find(params[:id])
+    end
+
+    def set_voting
+      @voting = @ballot.voting
     end
 
     # Only allow a list of trusted parameters through.

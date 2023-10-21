@@ -18,6 +18,9 @@
 </div>
 
 <% if @ballot %>
+  <% if @ballot.choice %>
+    Your current choice: <%= @ballot.choice %>
+  <% end %>
   <% if @ballot.expired? %>
     <% if @ballot.exp %>
       Your ballot is expired.
@@ -26,7 +29,10 @@
       <%= button_to "Get password to vote", deliver_ballot_path(@ballot) %>
     <% end %>
   <% else %>
-    valid
+    <%= form_with url: @ballot, method: :put do |form|%>
+      <%= form.select :choice, @voting.get_choices %>
+      <%= form.submit "Vote" %>
+    <% end %>
   <% end %>
 <% end %>
 
