@@ -8,6 +8,11 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <style type="text/css">
+      .content {
+        margin: 10px;
+      }
+    </style>
   </head>
 
   <body>
@@ -25,6 +30,8 @@
         </ul>
       </div>
     </nav>
-    <%= yield %>
+    <div class="content">
+      <%= yield %>
+    </div>
   </body>
 </html>
