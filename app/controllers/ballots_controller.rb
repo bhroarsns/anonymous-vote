@@ -1,8 +1,7 @@
 class BallotsController < ApplicationController
-  before_action :set_ballot, only: %i[ update destroy deliver ]
-  before_action :set_voting, only: %i[ update destroy ]
+  before_action :set_ballot_and_voting, only: %i[ update destroy deliver ]
 
-  # POST /ballots or /ballots.json
+  # owner only
   def create
     authorize Ballot
     @ballot = Ballot.new(ballot_params)
@@ -18,6 +17,7 @@ class BallotsController < ApplicationController
     end
   end
 
+  # voter only
   def update
     if authorized_voter?
       respond_to do |format|
@@ -32,17 +32,18 @@ class BallotsController < ApplicationController
     end
   end
 
-  # DELETE /ballots/1 or /ballots/1.json
+  # owner only
   def destroy
     authorize @ballot
     @ballot.destroy!
 
     respond_to do |format|
-      format.html { redirect_to @voting, notice: "Ballot was successfully destroyed." }
+      format.html { redirect_back_or_to voters_voting_path(@voting), notice: "Ballot was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
+  # voter or owner
   def deliver
     if (current_user == @ballot.voting.user) || authorized_voter?
       BallotMailer.with(ballot: @ballot, exp: params[:exp]).ballot.deliver_later
@@ -51,18 +52,14 @@ class BallotsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_back_or_to @ballot.voting, notice: "Ballot was successfully delivered." }
+      format.html { redirect_back_or_to @voting, notice: "Ballot was successfully delivered." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ballot
+    def set_ballot_and_voting
       @ballot = Ballot.find(params[:id])
-    end
-
-    def set_voting
       @voting = @ballot.voting
     end
 
@@ -70,7 +67,6 @@ class BallotsController < ApplicationController
       (@ballot.voter == params[:v]) && (@ballot.authenticate(params[:p]))
     end
 
-    # Only allow a list of trusted parameters through.
     def ballot_params
       params.require(:ballot).permit(:voting_id, :voter, :password_digest, :choice, :exp)
     end

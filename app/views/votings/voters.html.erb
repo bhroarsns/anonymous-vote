@@ -2,45 +2,51 @@
   <div class="alert alert-primary" role="alert"><%= notice %></div>
 <% end %>
 
-<h2><%= @voting.title%>の投票者</h2>
+<h2><%= link_to @voting.title, @voting %>: 投票者管理</h2>
 
-<div id="console">
+<div class="row">
+  <div class="col-md-auto">
+    <section id="console">
+      <div class="card card-body my-2">
+        
+        <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
+          <%= form.submit "未送信の投票用紙を一括で送信", class: "btn btn-success btn-sm" %>
+        <% end %>
+      </div>
 
-  <div id="voting.ballots">
+      <div class="card card-body my-2">
+        <%= form_with url: issue_voting_path(@voting) do |form| %>
+          <%= form.email_field :email, placeholder: "someone@example.com" %>
+          <%= form.submit "投票者を追加", class: "btn btn-primary btn-sm" %>
+        <% end %>
+        <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
+          <%= form.file_field :file %>
+          <%= form.submit "CSVから投票者を追加", class: "btn btn-primary btn-sm" %>
+        <% end %>
+      </div>
+    </section>
+  </div>
+
+  <div class="col">
     <table class="table">
       <thead>
         <tr>
           <th>投票者</th>
-          <td>送信状況</td>
-          <td></td>
+          <th>送信状況</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <% @voting.ballots.each do |ballot| %>
           <tr>
-            <th><%= ballot.voter %></th>
-            <td><% if ballot.is_delivered %><i class="bi-check" aria-label="この投票用紙は送信済み"></i><% else %><%= link_to deliver_ballot_path(ballot), data: { turbo_method: :post } do%><i class="bi-send" aria-label="この投票用紙を送信する"></i><% end %><% end %></td>
+            <td><%= ballot.voter %></td>
+            <td><% if ballot.is_delivered %><i class="bi-check" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>
+            <td><%= link_to deliver_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.is_delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
             <td><%= link_to ballot, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-
-    <%= form_with url: issue_voting_path(@voting) do |form| %>
-      <%= form.email_field :email %>
-      <%= form.submit "Issue ballot" %>
-    <% end %>
-    
-    <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
-      <%= form.file_field :file %>
-      <%= form.submit "Issue ballots from CSV" %>
-    <% end %>
-
-    <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
-      <%= form.date_field :exp, :include_blank => true %>
-      <%= form.submit "Deliver all undelivered ballots" %>
-    <% end %>
   </div>
 </div>
-
-<%= link_to "投票トップに戻る", @voting %>
