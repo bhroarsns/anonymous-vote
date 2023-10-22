@@ -1,11 +1,42 @@
-<p style="color: green"><%= notice %></p>
+<% if notice %>
+  <div class="alert alert-primary" role="alert"><%= notice %></div>
+<% end %>
 
-<%= render @voting %>
+<h2> <%= @voting.title %> </h2>
+
+<% if current_user == @voting.user %>
+  <div>
+    <%= link_to edit_voting_path(@voting) do %><i class="bi-pencil-square" aria-label="この投票を編集する"></i><% end %>
+    <%= link_to @voting, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票を削除する"></i><% end %>
+    <%= link_to "投票者管理", voters_voting_path(@voting) %>
+  </div>
+<% end %>
+
+<section id="voting_info">
+  <dl>
+    <dt>作成者</dt>
+      <dd><%= @voting.user.name %></dd>
+    <dt>締切</dt>
+      <dd><%= l @voting.deadline %></dd>
+    <dt>説明</dt>
+      <dd><%= @voting.description %></dd>
+    <dt>選択肢</dt>
+      <dd>
+        <ul>
+          <% @voting.get_choices.each do |choice| %>
+            <li><%= choice %></li>
+          <% end %>
+        </ul>
+      </dd>
+    <dt>参加人数</dt>
+      <dd><%= @voting.ballots.count %>人</dd>
+  </dl>
+</section>
 
 <div>
-<h3> Result </h3>
+  <h3>結果</h3>
   <% if @result %>
-    <table border=1>
+    <table class="table">
       <% @result.each do |choice, num| %>
         <tr>
           <th><%= format_choice(choice) %></th><td><%= num %></td>
@@ -13,64 +44,32 @@
       <% end %>
     </table>
   <% else %>
-    *Currently hidden*
+    投票が進行中です
   <% end %>
 </div>
 
 <% if @ballot %>
-  <% if @ballot.choice %>
-    Your current choice: <%= @ballot.choice %>
-  <% end %>
-  <% if @ballot.expired? %>
-    <% if @ballot.exp %>
-      Your ballot is expired.
-      <%= button_to "Deliver again", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
-    <% else %>
-      <%= button_to "Get password to vote", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
-    <% end %>
+  <%= @ballot.voter %>さん: 投票権があります
+  <% if @voting.closed? %>
+    投票は締め切られました.
   <% else %>
-    <%= form_with url: @ballot, method: :put do |form|%>
-      <%= form.select :choice, @voting.get_choices %>
-      <%= form.submit "Vote" %>
+    <% if @ballot.choice %>
+      現在の投票先: <%= @ballot.choice %>
+    <% else %>
+      まだ投票していません
+    <% end %>
+    <% if @ballot.expired? %>
+      <% if @ballot.exp %>
+        パスワードの有効期限が切れています.
+        <%= button_to "再発行はこちら", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
+      <% else %>
+        <%= button_to "パスワードを発行", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
+      <% end %>
+    <% else %>
+      <%= form_with url: @ballot, method: :put do |form|%>
+        <%= form.select :choice, @voting.get_choices %>
+        <%= form.submit "Vote" %>
+      <% end %>
     <% end %>
   <% end %>
-<% end %>
-
-<% if current_user == @voting.user %>
-  <div id="console">
-    <div>
-      <%= link_to "Edit this voting", edit_voting_path(@voting) %>
-
-      <%= button_to "Destroy this voting", @voting, method: :delete %>
-    </div>
-
-    <div id="voting.ballots">
-      <table border=1>
-        <% @voting.ballots.each do |ballot| %>
-          <tr>
-            <th><%= ballot.voter %></th>
-            <td><% if ballot.is_delivered %>Delivered<% else %><%= button_to "Deliver this ballot", deliver_ballot_path(ballot) %><% end %></td>
-            <td><%= link_to "Delete this ballot", ballot, data: { turbo_method: :delete } %></td>
-          </tr>
-        <% end %>
-      </table>
-
-      <%= form_with url: issue_voting_path(@voting) do |form| %>
-        <%= form.email_field :email %>
-        <%= form.submit "Issue ballot" %>
-      <% end %>
-      
-      <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
-        <%= form.file_field :file %>
-        <%= form.submit "Issue ballots from CSV" %>
-      <% end %>
-
-      <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
-        <%= form.date_field :exp, :include_blank => true %>
-        <%= form.submit "Deliver all undelivered ballots" %>
-      <% end %>
-    </div>
-
-    <%= link_to "Back to mypage", mypage_path %>
-  </div>
 <% end %>

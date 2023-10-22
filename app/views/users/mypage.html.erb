@@ -17,5 +17,7 @@
       <% end %>
     </tbody>
   </table>
-  <%= link_to "新しい投票を作成", new_voting_path, class: "btn btn-primary" %>
+  <%= link_to new_voting_path, class: "btn btn-primary" do %>
+    <i class="bi bi-plus" aria-hidden="true"></i>作成
+  <% end %>
 </div>

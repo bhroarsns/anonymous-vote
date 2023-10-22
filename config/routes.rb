@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     member do
       post 'issue'
       post 'deliver_all'
+      get 'voters'
     end
   end
 

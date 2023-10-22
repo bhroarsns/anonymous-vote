@@ -28,6 +28,10 @@ class Voting < ApplicationRecord
     self.choices.split("\n")
   end
 
+  def closed?
+    self.deadline < Time.current
+  end
+
   def count_votes
     # Voter (and also owner) should not be able to see the vote counts until the deadline
     if self.deadline < Time.current

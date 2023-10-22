@@ -1,5 +1,5 @@
 class VotingsController < ApplicationController
-  before_action :set_voting, only: %i[ show edit update destroy issue deliver_all ]
+  before_action :set_voting, only: %i[ show edit update destroy issue deliver_all voters ]
 
   # (method: GET) Show voting page via votings/{uuid}
   def show
@@ -94,6 +94,11 @@ class VotingsController < ApplicationController
       format.html { redirect_to @voting, notice: "Ballots are successfully delivered."}
       format.json { head :no_content }
     end
+  end
+
+  def voters
+    authorize @voting
+    @ballots = @voting.ballots
   end
 
   private

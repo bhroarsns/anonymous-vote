@@ -1,0 +1,46 @@
+<% if notice %>
+  <div class="alert alert-primary" role="alert"><%= notice %></div>
+<% end %>
+
+<h2><%= @voting.title%>の投票者</h2>
+
+<div id="console">
+
+  <div id="voting.ballots">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>投票者</th>
+          <td>送信状況</td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @voting.ballots.each do |ballot| %>
+          <tr>
+            <th><%= ballot.voter %></th>
+            <td><% if ballot.is_delivered %><i class="bi-check" aria-label="この投票用紙は送信済み"></i><% else %><%= link_to deliver_ballot_path(ballot), data: { turbo_method: :post } do%><i class="bi-send" aria-label="この投票用紙を送信する"></i><% end %><% end %></td>
+            <td><%= link_to ballot, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= form_with url: issue_voting_path(@voting) do |form| %>
+      <%= form.email_field :email %>
+      <%= form.submit "Issue ballot" %>
+    <% end %>
+    
+    <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
+      <%= form.file_field :file %>
+      <%= form.submit "Issue ballots from CSV" %>
+    <% end %>
+
+    <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
+      <%= form.date_field :exp, :include_blank => true %>
+      <%= form.submit "Deliver all undelivered ballots" %>
+    <% end %>
+  </div>
+</div>
+
+<%= link_to "投票トップに戻る", @voting %>
