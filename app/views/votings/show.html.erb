@@ -4,37 +4,74 @@
 
 <h2> <%= @voting.title %> </h2>
 
-<% if current_user == @voting.user %>
-  <div>
-    <%= link_to edit_voting_path(@voting) do %><i class="bi-pencil-square" aria-label="この投票を編集する"></i><% end %>
-    <%= link_to @voting, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票を削除する"></i><% end %>
-    <%= link_to "投票者管理", voters_voting_path(@voting) %>
+<div class="row">
+  <div class="col-md-auto">
+    <dl>
+      <dt>作成者</dt>
+        <dd><%= @voting.user.name %></dd>
+      <dt>締切</dt>
+        <dd><%= l @voting.deadline %></dd>
+      <dt>説明</dt>
+        <dd><%= @voting.description %></dd>
+      <dt>選択肢</dt>
+        <dd>
+          <ul>
+            <% @voting.get_choices.each do |choice| %>
+              <li><%= choice %></li>
+            <% end %>
+          </ul>
+        </dd>
+      <dt>参加人数</dt>
+        <dd><%= @voting.ballots.count %>人</dd>
+    </dl>
   </div>
-<% end %>
-
-<section id="voting_info">
-  <dl>
-    <dt>作成者</dt>
-      <dd><%= @voting.user.name %></dd>
-    <dt>締切</dt>
-      <dd><%= l @voting.deadline %></dd>
-    <dt>説明</dt>
-      <dd><%= @voting.description %></dd>
-    <dt>選択肢</dt>
-      <dd>
-        <ul>
-          <% @voting.get_choices.each do |choice| %>
-            <li><%= choice %></li>
+  <div class="col">
+    <% if current_user == @voting.user %>
+      <div class="card card-body my-2">
+        <h5 class="card-title">管理者画面</h5>
+        <%= link_to voters_voting_path(@voting) do %><i class="bi-people" aria-hidden="true"></i>投票者管理<% end %>
+        <%= link_to edit_voting_path(@voting) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
+        <%= link_to @voting, data: { turbo_method: :delete } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+      </div>
+    <% end %>
+    <% if @ballot %>
+      <div class="card card-body my-2">
+        <h5 class="card-title">投票者: <%= @ballot.voter %>さん</h5>
+        <% if @voting.closed? %>
+          <span class="card-item">投票は締め切られました.</span>
+        <% else %>
+          <% if @ballot.choice %>
+            <span class="card-item">現在の投票先: <%= @ballot.choice %></span>
+          <% else %>
+            <span class="card-item">まだ投票していません</span>
           <% end %>
-        </ul>
-      </dd>
-    <dt>参加人数</dt>
-      <dd><%= @voting.ballots.count %>人</dd>
-  </dl>
-</section>
+          <% if @ballot.expired? %>
+            <% if @ballot.exp %>
+              <span class="card-item">
+                パスワードの有効期限が切れています.
+                <%= button_to "再発行はこちら", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %>
+              </span>
+            <% else %>
+              <span class="card-item">
+                <%= button_to "パスワードを発行", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %>
+              </span>
+            <% end %>
+          <% else %>
+            <span class="card-item">
+              <%= form_with url: @ballot, method: :put do |form|%>
+                <%= form.select :choice, @voting.get_choices %>
+                <%= form.submit "Vote" %>
+              <% end %>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
 
-<div>
-  <h3>結果</h3>
+<div class="card card-body">
+  <h3>投票結果</h3>
   <% if @result %>
     <table class="table">
       <% @result.each do |choice, num| %>
@@ -47,29 +84,3 @@
     投票が進行中です
   <% end %>
 </div>
-
-<% if @ballot %>
-  <%= @ballot.voter %>さん: 投票権があります
-  <% if @voting.closed? %>
-    投票は締め切られました.
-  <% else %>
-    <% if @ballot.choice %>
-      現在の投票先: <%= @ballot.choice %>
-    <% else %>
-      まだ投票していません
-    <% end %>
-    <% if @ballot.expired? %>
-      <% if @ballot.exp %>
-        パスワードの有効期限が切れています.
-        <%= button_to "再発行はこちら", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
-      <% else %>
-        <%= button_to "パスワードを発行", deliver_ballot_path(@ballot, v:@voter, p:@password) %>
-      <% end %>
-    <% else %>
-      <%= form_with url: @ballot, method: :put do |form|%>
-        <%= form.select :choice, @voting.get_choices %>
-        <%= form.submit "Vote" %>
-      <% end %>
-    <% end %>
-  <% end %>
-<% end %>
