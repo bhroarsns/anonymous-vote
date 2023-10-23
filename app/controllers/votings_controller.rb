@@ -76,7 +76,7 @@ class VotingsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting), notice: "Voter was successfully added."}
+      format.html { redirect_to voters_voting_path(@voting), notice: "参加者が追加されました."}
       format.json { head :no_content }
     end
   end
@@ -91,7 +91,7 @@ class VotingsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting), notice: "Ballots are successfully delivered."}
+      format.html { redirect_to voters_voting_path(@voting), notice: "投票用紙が送信されました."}
       format.json { head :no_content }
     end
   end

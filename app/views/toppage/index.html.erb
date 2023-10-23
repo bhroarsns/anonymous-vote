@@ -1,5 +1,9 @@
-<h1> Welcome to Anonymous-vote </h1>
+<% if notice %>
+  <div class="alert alert-primary" role="alert"><%= notice %></div>
+<% end %>
 
-<p>This is an online anonymous vote manager.</p>
-<p>To set up a voting, please <%= link_to "sign in", new_user_session_path %>.</p>
-<p>Do not have an account? <%= link_to "Sign up", new_user_registration_path %>.</p>
+<h1>Anonymous-voteへようこそ!</h1>
+
+<p>オンラインで匿名投票が行えるツールです.</p>
+<p>投票を開くには<%= link_to "サインイン", new_user_session_path %>してください.</p>
+<p>新規アカウント登録は<%= link_to "こちら", new_user_registration_path %>.</p>

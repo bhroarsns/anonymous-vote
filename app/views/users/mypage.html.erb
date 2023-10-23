@@ -1,23 +1,30 @@
-<p style="color: green"><%= notice %></p>
+<% if notice %>
+  <div class="alert alert-primary" role="alert"><%= notice %></div>
+<% end %>
 
-<h2><%= current_user.name %>さんの作成した投票</h2>
+<h2>マイページ</h2>
 
-<div id="mypage.votings">
-  <table class="table">
-    <thead>
-      <th></th><th>説明</th><th>締切</th>
-    </thead>
-    <tbody>
-      <% current_user.votings.order(deadline: "DESC").each do |voting|%>
-        <tr>
-          <th><%= link_to voting.title, voting_path(voting) %></th>
-          <td><%= voting.description[0,30] %></td>
-          <td><%= l voting.deadline, format: :short %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <%= link_to new_voting_path, class: "btn btn-primary" do %>
-    <i class="bi bi-plus" aria-hidden="true"></i>作成
-  <% end %>
-</div>
+<section class="card card-body my-5">
+  <h4 class="card-title">作成した投票</h4>
+  <div id="mypage.votings">
+    <table class="table">
+      <thead>
+        <th></th><th>説明</th><th>締切</th>
+      </thead>
+      <tbody>
+        <% current_user.votings.order(deadline: "DESC").each do |voting|%>
+          <tr>
+            <th><%= link_to voting.title, voting_path(voting) %></th>
+            <td><%= voting.description[0,30] %></td>
+            <td><%= l voting.deadline, format: :short %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= link_to new_voting_path, class: "btn btn-primary" do %>
+      新規作成
+    <% end %>
+  </div>
+</section>
+
+<%= link_to edit_user_registration_path(current_user) do %>アカウント設定<% end %>

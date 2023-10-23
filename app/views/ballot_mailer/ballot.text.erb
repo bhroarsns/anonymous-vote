@@ -1,9 +1,9 @@
-Ballot for <%= @address %>
+<%= @address %>さん
 
 <% if @exp %>
-  Vote now from this <%= link_to "link", @url %>. Expiration date of this link is set to <%= @exp %>.
+  投票用リンクは<%= link_to "こちら", @url %>です(有効期限: <%= l @exp、format: :datetime_long %>).
 <% else %>
-  Get voting password from this <%= link_to "link", @url %>.
+  <%= link_to "こちら", @url %>のリンクから投票用リンクを取得してください.
 <% end %>
 
-In the case this email is unexpected, please contact us from here.
+もし心当たりのない場合, お手数ですがこちらからご連絡ください.

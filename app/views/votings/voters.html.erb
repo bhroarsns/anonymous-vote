@@ -16,17 +16,17 @@
       <div class="card card-body my-2 container">
         <%= form_with url: issue_voting_path(@voting), multipart: true, class: "" do |form| %>
           <div class="mb-4">
-              <%= form.label :email, "個別に追加", class: "fw-bold", style: "display: block" %>
-              <%= form.email_field :email, placeholder: "someone@example.com" %>
+              <%= form.label :email, "個別に追加", class: "form-label" %>
+              <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
+          </div>
+
+          <div class="mb-4">
+            <%= form.label :file, "一括で追加(CSV)", class: "form-label" %>
+            <%= form.file_field :file, class:"form-control"%>
           </div>
 
           <div>
-            <%= form.label :file, "一括で追加(CSV)", class: "fw-bold", style: "display: block" %>
-            <%= form.file_field :file %>
-          </div>
-
-          <div class="mt-4">
-            <%= form.submit "投票者を追加", class: "btn btn-primary btn-sm" %>
+            <%= form.submit "参加者を追加", class: "btn btn-primary btn-sm" %>
           </div>
         <% end %>
       </div>
@@ -37,7 +37,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th>投票者</th>
+          <th>参加者</th>
           <th>送信状況</th>
           <th></th>
           <th></th>
@@ -49,7 +49,13 @@
             <td><%= ballot.voter %></td>
             <td><% if ballot.is_delivered %><i class="bi-check" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>
             <td><%= link_to deliver_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.is_delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
-            <td><%= link_to ballot, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %></td>
+            <td>
+              <% if ballot.is_delivered %>
+                <%= link_to ballot, data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?\n削除されたことが参加者にも通達されます." } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
+              <% else %>
+                <%= link_to ballot, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

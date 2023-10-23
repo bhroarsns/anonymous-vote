@@ -4,24 +4,9 @@
 
 <h2> <%= @voting.title %> </h2>
 
-<div class="card card-body my-2">
-  <h3 class="card-title">投票結果</h3>
-  <% if @result %>
-    <table class="table table-bordered">
-      <% @result.each do |choice, num| %>
-        <tr>
-          <th><%= format_choice(choice) %></th><td><%= num %></td>
-        </tr>
-      <% end %>
-    </table>
-  <% else %>
-    投票が進行中です
-  <% end %>
-</div>
-
 <div class="row">
   <div class="col-md-auto">
-    <dl>
+    <dl class="card card-body my-2">
       <dt>作成者</dt>
         <dd><%= @voting.user.name %></dd>
       <dt>締切</dt>
@@ -52,7 +37,7 @@
             <%= link_to edit_voting_path(@voting) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
           </div>
           <div class="col">
-            <%= link_to @voting, data: { turbo_method: :delete } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+            <%= link_to @voting, data: { turbo_method: :delete, confirm: "この投票を削除します。\nこのことは投票用紙を送信済みの参加者にも通達されます。" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
           </div>
         </div>
       </div>
@@ -94,4 +79,19 @@
       </div>
     <% end %>
   </div>
+</div>
+
+<div class="card card-body my-2">
+  <h3 class="card-title">投票結果</h3>
+  <% if @result %>
+    <table class="table table-bordered">
+      <% @result.each do |choice, num| %>
+        <tr>
+          <th><%= format_choice(choice) %></th><td><%= num %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    投票が進行中です
+  <% end %>
 </div>
