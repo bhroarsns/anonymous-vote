@@ -4,6 +4,21 @@
 
 <h2> <%= @voting.title %> </h2>
 
+<div class="card card-body my-2">
+  <h3 class="card-title">投票結果</h3>
+  <% if @result %>
+    <table class="table table-bordered">
+      <% @result.each do |choice, num| %>
+        <tr>
+          <th><%= format_choice(choice) %></th><td><%= num %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    投票が進行中です
+  <% end %>
+</div>
+
 <div class="row">
   <div class="col-md-auto">
     <dl>
@@ -66,9 +81,9 @@
             <% end %>
           <% else %>
             <span class="card-item">
-              <%= form_with url: @ballot, method: :put do |form|%>
-                <%= form.select :choice, @voting.get_choices %>
-                <%= form.submit "Vote" %>
+              <%= form_with url: ballot_url(@ballot, v:@voter, p:@password), local: true, method: :put do |form|%>
+                <%= form.select :choice, @voting.get_choices, {}, { class: "form-select" } %>
+                <%= form.submit "投票する", class: "btn btn-primary" %>
               <% end %>
             </span>
           <% end %>
@@ -76,19 +91,4 @@
       </div>
     <% end %>
   </div>
-</div>
-
-<div class="card card-body">
-  <h3 class="card-title">投票結果</h3>
-  <% if @result %>
-    <table class="table">
-      <% @result.each do |choice, num| %>
-        <tr>
-          <th><%= format_choice(choice) %></th><td><%= num %></td>
-        </tr>
-      <% end %>
-    </table>
-  <% else %>
-    投票が進行中です
-  <% end %>
 </div>

@@ -8,7 +8,7 @@ class BallotsController < ApplicationController
 
     respond_to do |format|
       if @ballot.save
-        format.html { redirect_to ballot_url(@ballot), notice: "Ballot was successfully created." }
+        format.html { redirect_to ballot_url(@ballot), notice: "参加者が追加されました." }
         format.json { render :show, status: :created, location: @ballot }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -22,7 +22,7 @@ class BallotsController < ApplicationController
     if authorized_voter?
       respond_to do |format|
         if @ballot.update(choice: params[:choice])
-          format.html { redirect_back_or_to @voting, notice: "Your vote was accepted." }
+          format.html { redirect_back_or_to @voting, notice: "投票を受け付けました." }
           format.json { render :show, status: :ok, location: @ballot }
         else
           format.html { render :edit, status: :unprocessable_entity }
@@ -38,22 +38,31 @@ class BallotsController < ApplicationController
     @ballot.destroy!
 
     respond_to do |format|
-      format.html { redirect_back_or_to voters_voting_path(@voting), notice: "Ballot was successfully destroyed." }
+      format.html { redirect_back_or_to voters_voting_path(@voting), notice: "参加者が削除されました." }
       format.json { head :no_content }
     end
   end
 
   # voter or owner
   def deliver
-    if (current_user == @ballot.voting.user) || authorized_voter?
-      BallotMailer.with(ballot: @ballot, exp: params[:exp]).ballot.deliver_later
+    if (current_user == @ballot.voting.user)
+      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery).ballot.deliver_later
       @ballot.update(is_delivered: true)
-      @ballot.save
-    end
-
-    respond_to do |format|
-      format.html { redirect_back_or_to @voting, notice: "Ballot was successfully delivered." }
-      format.json { head :no_content }
+      if @ballot.save
+        respond_to do |format|
+          format.html { redirect_back_or_to voters_voting_path(@voting), notice: "送信されました." }
+          format.json { head :no_content }
+        end
+      end
+    elsif authorized_voter?
+      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote).ballot.deliver_later
+      @ballot.update(is_delivered: true)
+      if @ballot.save
+        respond_to do |format|
+          format.html { redirect_back_or_to @voting, notice: "発行されました. 数分以内にメールが届きます." }
+          format.json { head :no_content }
+        end
+      end
     end
   end
 
