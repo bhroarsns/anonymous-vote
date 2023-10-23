@@ -44,7 +44,7 @@ class BallotsController < ApplicationController
   end
 
   # voter or owner
-  def deliver_from_owner
+  def deliver
     if (current_user == @ballot.voting.user)
       BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot.deliver_later
       @ballot.update(is_delivered: true)
@@ -54,7 +54,6 @@ class BallotsController < ApplicationController
           format.json { head :no_content }
         end
       end
-    end
     elsif authorized_voter?
       BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).ballot.deliver_later
       @ballot.update(is_delivered: true)
