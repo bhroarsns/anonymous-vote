@@ -1,11 +1,3 @@
-<h1>Editing voting</h1>
+<h2><%= link_to @voting.title, @voting %>/設定</h2>
 
 <%= render "form", voting: @voting %>
-
-<br>
-
-<div>
-  <%= link_to "Show this voting", @voting %>
-</div>
-
-<%= link_to "Back to mypage", mypage_path %>

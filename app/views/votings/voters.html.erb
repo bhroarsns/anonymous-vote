@@ -2,26 +2,32 @@
   <div class="alert alert-primary" role="alert"><%= notice %></div>
 <% end %>
 
-<h2><%= link_to @voting.title, @voting %>: 投票者管理</h2>
+<h2><%= link_to @voting.title, @voting %>/参加者管理</h2>
 
 <div class="row">
   <div class="col-md-auto">
     <section id="console">
       <div class="card card-body my-2">
-        
         <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
-          <%= form.submit "未送信の投票用紙を一括で送信", class: "btn btn-success btn-sm" %>
+          <%= form.submit "未送信の投票用紙を一括で送信", class: "btn btn-primary btn-sm" %>
         <% end %>
       </div>
 
-      <div class="card card-body my-2">
-        <%= form_with url: issue_voting_path(@voting) do |form| %>
-          <%= form.email_field :email, placeholder: "someone@example.com" %>
-          <%= form.submit "投票者を追加", class: "btn btn-primary btn-sm" %>
-        <% end %>
-        <%= form_with url: issue_voting_path(@voting), multipart: true do |form| %>
-          <%= form.file_field :file %>
-          <%= form.submit "CSVから投票者を追加", class: "btn btn-primary btn-sm" %>
+      <div class="card card-body my-2 container">
+        <%= form_with url: issue_voting_path(@voting), multipart: true, class: "" do |form| %>
+          <div class="mb-4">
+              <%= form.label :email, "個別に追加", class: "fw-bold", style: "display: block" %>
+              <%= form.email_field :email, placeholder: "someone@example.com" %>
+          </div>
+
+          <div>
+            <%= form.label :file, "一括で追加(CSV)", class: "fw-bold", style: "display: block" %>
+            <%= form.file_field :file %>
+          </div>
+
+          <div class="mt-4">
+            <%= form.submit "投票者を追加", class: "btn btn-primary btn-sm" %>
+          </div>
         <% end %>
       </div>
     </section>

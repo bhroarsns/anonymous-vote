@@ -27,7 +27,7 @@ class VotingsController < ApplicationController
 
     respond_to do |format|
       if @voting.save
-        format.html { redirect_to voting_url(@voting), notice: "Voting was successfully created." }
+        format.html { redirect_to voting_url(@voting), notice: "投票を作成しました." }
         format.json { render :show, status: :created, location: @voting }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -46,7 +46,7 @@ class VotingsController < ApplicationController
     authorize @voting
     respond_to do |format|
       if @voting.update(voting_params)
-        format.html { redirect_to voting_url(@voting), notice: "Voting was successfully updated." }
+        format.html { redirect_to voting_url(@voting), notice: "変更を保存しました." }
         format.json { render :show, status: :ok, location: @voting }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -62,7 +62,7 @@ class VotingsController < ApplicationController
 
     respond_to do |format|
       # redirect to mypage because there is no routing GET "/votings"
-      format.html { redirect_to mypage_path, notice: "Voting was successfully destroyed." }
+      format.html { redirect_to mypage_path, notice: "投票は削除されました." }
       format.json { head :no_content }
     end
   end
@@ -85,7 +85,7 @@ class VotingsController < ApplicationController
     authorize @voting
 
     @voting.ballots.where(is_delivered: nil).each do |ballot|
-      BallotMailer.with(ballot: ballot, exp: params[:exp]).ballot.deliver_later
+      BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery).ballot.deliver_later
       ballot.update(is_delivered: true)
       ballot.save
     end

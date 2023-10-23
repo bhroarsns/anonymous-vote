@@ -28,6 +28,25 @@ class Voting < ApplicationRecord
     self.choices.split("\n")
   end
 
+  def self.modes
+    [["デフォルト", "default"], ["セキュリティ", "security"]]
+  end
+
+  def exp_at_delivery
+    if self.mode == "default"
+      self.deadline
+    elsif self.mode == "security"
+    end
+  end
+
+  def exp_at_vote
+    if self.mode == "default"
+      self.deadline
+    elsif self.mode == "security"
+      Time.current + 3.minutes
+    end
+  end
+
   def closed?
     self.deadline < Time.current
   end

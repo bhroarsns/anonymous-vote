@@ -1,5 +1,5 @@
 module VotingsHelper
   def format_choice(choice)
-    choice ||= "not voted"
+    choice ||= "未投票"
   end
 end
