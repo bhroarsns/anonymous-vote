@@ -63,29 +63,32 @@
         <% if @voting.closed? %>
           <span class="card-item">投票は締め切られました.</span>
         <% else %>
-          <% if @ballot.choice %>
-            <span class="card-item">現在の投票先: <%= @ballot.choice %></span>
-          <% else %>
-            <span class="card-item">まだ投票していません</span>
-          <% end %>
+          <div class="row justify-content-end mb-2 align-items-center">
+            <% if @ballot.choice %>
+              <div class="col">現在の投票先: <%= @ballot.choice %></div>
+              <div class="col-md-auto"><%= button_to "投票を取り消す", ballot_url(@ballot, v:@voter, p:@password), method: :put , class: "btn btn-sm btn-danger" %></div>
+            <% else %>
+              <div class="col">まだ投票していません</div>
+            <% end %>
+          </div>
           <% if @ballot.expired? %>
             <% if @ballot.exp %>
-              <span class="card-item">
-                パスワードの有効期限が切れています.
-                <%= button_to "再発行はこちら", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %>
-              </span>
+              <div class="row justify-content-end mt-2 align-items-center">
+                <div class="col">パスワードの有効期限が切れています.</div>
+                <div class="col-md-auto"><%= button_to "再発行はこちら", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %></div>
+              </div>
             <% else %>
-              <span class="card-item">
-                <%= button_to "パスワードを発行", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %>
-              </span>
+              <div class="row mt-2">
+                <div class="col"><%= button_to "パスワードを発行", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %></div>
+              </div>
             <% end %>
           <% else %>
-            <span class="card-item">
-              <%= form_with url: ballot_url(@ballot, v:@voter, p:@password), local: true, method: :put do |form|%>
-                <%= form.select :choice, @voting.get_choices, {}, { class: "form-select" } %>
-                <%= form.submit "投票する", class: "btn btn-primary" %>
-              <% end %>
-            </span>
+            <%= form_with url: ballot_url(@ballot, v:@voter, p:@password), local: true, method: :put do |form|%>
+              <div class="row justify-content-end mt-2 align-items-center">
+                <div class="col"><%= form.select :choice, @voting.get_choices, { selected: @ballot.choice }, { class: "form-select" }%></div>
+                <div class="col-md-auto"><%= form.submit "投票する", class: "btn btn-primary" %></div>
+              </div>
+            <% end %>
           <% end %>
         <% end %>
       </div>
