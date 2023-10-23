@@ -29,14 +29,22 @@
     <% if current_user == @voting.user %>
       <div class="card card-body my-2">
         <h5 class="card-title">管理者画面</h5>
-        <%= link_to voters_voting_path(@voting) do %><i class="bi-people" aria-hidden="true"></i>投票者管理<% end %>
-        <%= link_to edit_voting_path(@voting) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
-        <%= link_to @voting, data: { turbo_method: :delete } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+        <div class="row">
+          <div class="col">
+            <%= link_to voters_voting_path(@voting) do %><i class="bi-people" aria-hidden="true"></i>参加者管理<% end %>
+          </div>
+          <div class="col">
+            <%= link_to edit_voting_path(@voting) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
+          </div>
+          <div class="col">
+            <%= link_to @voting, data: { turbo_method: :delete } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+          </div>
+        </div>
       </div>
     <% end %>
     <% if @ballot %>
       <div class="card card-body my-2">
-        <h5 class="card-title">投票者: <%= @ballot.voter %>さん</h5>
+        <h5 class="card-title"><%= @ballot.voter %>さん</h5>
         <% if @voting.closed? %>
           <span class="card-item">投票は締め切られました.</span>
         <% else %>
@@ -71,7 +79,7 @@
 </div>
 
 <div class="card card-body">
-  <h3>投票結果</h3>
+  <h3 class="card-title">投票結果</h3>
   <% if @result %>
     <table class="table">
       <% @result.each do |choice, num| %>
