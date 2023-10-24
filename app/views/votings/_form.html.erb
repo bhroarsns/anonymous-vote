@@ -53,7 +53,7 @@
       -->
 
       <div>
-        <%= form.submit "保存する", class: "btn btn-primary" %>
+        <%= form.submit "保存する", data: { turbo_confirm: "投票の設定を保存します。\nこのことは投票用紙を送信済みの参加者にも通達されます。" }, class: "btn btn-primary" %>
       </div>
     <% end %>
   </div>
