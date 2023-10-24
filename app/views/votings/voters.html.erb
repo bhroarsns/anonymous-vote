@@ -2,19 +2,14 @@
   <div class="alert alert-primary" role="alert"><%= notice %></div>
 <% end %>
 
-<h2><%= link_to @voting.title, @voting %>/参加者管理</h2>
+<h2><%= link_to @voting.title, voting_path(@voting, v:@voter, p:@password) %>/参加者管理</h2>
 
 <div class="row">
   <div class="col-md-auto">
     <section id="console">
-      <div class="card card-body my-2">
-        <%= form_with url: deliver_all_voting_path(@voting) do |form| %>
-          <%= form.submit "未送信の投票用紙を一括で送信", class: "btn btn-primary btn-sm" %>
-        <% end %>
-      </div>
-
       <div class="card card-body my-2 container">
-        <%= form_with url: issue_voting_path(@voting), multipart: true, class: "" do |form| %>
+        <h5 class="card-title">1. 参加者を追加</h5>
+        <%= form_with url: issue_voting_path(@voting, v:@voter, p:@password), multipart: true, class: "" do |form| %>
           <div class="mb-4">
               <%= form.label :email, "個別に追加", class: "form-label" %>
               <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
@@ -29,6 +24,10 @@
             <%= form.submit "参加者を追加", class: "btn btn-primary btn-sm" %>
           </div>
         <% end %>
+      </div>
+      <div class="card card-body my-2">
+        <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
+        <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
       </div>
     </section>
   </div>
@@ -48,7 +47,7 @@
           <tr>
             <td><%= ballot.voter %></td>
             <td><% if ballot.is_delivered %><i class="bi-check" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>
-            <td><%= link_to deliver_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.is_delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
+            <td><%= link_to deliver_from_owner_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.is_delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
             <td>
               <% if ballot.is_delivered %>
                 <%= link_to ballot, data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?\n削除されたことが参加者にも通達されます." } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>

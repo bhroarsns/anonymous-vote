@@ -1,49 +1,71 @@
-<%= form_with(model: voting) do |form| %>
-  <% if voting.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(voting.errors.count, "error") %> prohibited this voting from being saved:</h2>
+<div class="row mt-4">
+  <div class="col">
+    <%= form_with(model: voting) do |form| %>
+      <% if voting.errors.any? %>
+        <div style="color: red">
+          <h2><%= pluralize(voting.errors.count, "error") %> prohibited this voting from being saved:</h2>
 
+          <ul>
+            <% voting.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-4">
+        <%= form.label :title, "投票タイトル", class: "form-label" %>
+        <%= form.text_field :title, class: "form-control" %>
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :description, "説明", class: "form-label" %>
+        <%= form.text_area :description, class: "form-control" %>
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :choices, "選択肢(改行で追加)", class: "form-label" %><i class="bi-question-circle-fill"></i>
+        <%= form.text_area :choices, class: "form-control" %>
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :deadline, "締切(時刻まで入力必須)", class: "form-label" %>
+        <%= form.datetime_field :deadline, class: "form-control" %>
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :mode, "モード", class: "form-label" %><i class="bi-question-circle-fill"></i>
+        <%= form.select :mode, Voting.modes, {}, { class: "form-select" } %>
+      </div>
+
+      <!--
+      <div class="mb-4">
+        <%= form.label :config, class: "form-label" %>
+        <%= form.text_area :config, class: "form-control" %>
+      </div>
+      -->
+
+      <div>
+        <%= form.submit "保存する", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+  <div class="col">
+    <div class="card card-body mb-4">
+      <h5 class="card-title"><i class="bi-question-circle-fill" aria-hidden="true"></i>選択肢について</h5>
       <ul>
-        <% voting.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
+        <li>参加者は投票を取り消すことで「無投票」という選択ができます。</li>
+        <li>「無投票」とは別に、「棄権」「白票」のいずれかまたは両方を用意するのが一般的です。</li>
       </ul>
     </div>
-  <% end %>
-
-  <div class="mb-4">
-    <%= form.label :title, "投票タイトル", class: "form-label" %>
-    <%= form.text_field :title, class: "form-control" %>
+    <div class="card card-body">
+      <h5 class="card-title"><i class="bi-question-circle-fill" aria-hidden="true"></i>モードについて</h5>
+      <dl>
+        <dt>「デフォルト」モード</dt>
+        <dd>参加者に投票用リンクをメール送信できます。リンクは投票期間中ずっと有効です。</dd>
+        <dt>「セキュリティ」モード</dt>
+        <dd>参加者に招待リンクをメール送信できます。投票用リンクは参加者が招待リンクから自分で発行します。招待リンクは投票期間中ずっと有効ですが、投票リンクの有効期限は発行から3分で、セキュリティがより強固になります。</dd>
+      </ul>
+    </div>
   </div>
-
-  <div class="mb-4">
-    <%= form.label :description, "説明", class: "form-label" %>
-    <%= form.text_area :description, class: "form-control" %>
-  </div>
-
-  <div class="mb-4">
-    <%= form.label :choices, "選択肢(改行で追加)", class: "form-label" %>
-    <%= form.text_area :choices, class: "form-control" %>
-  </div>
-
-  <div class="mb-4">
-    <%= form.label :deadline, "締切(時刻まで入力必須)", class: "form-label" %>
-    <%= form.datetime_field :deadline, class: "form-control" %>
-  </div>
-
-  <div class="mb-4">
-    <%= form.label :mode, "モード", class: "form-label" %>
-    <%= form.select :mode, Voting.modes, {}, { class: "form-select" } %>
-  </div>
-
-  <!--
-  <div class="mb-4">
-    <%= form.label :config, class: "form-label" %>
-    <%= form.text_area :config, class: "form-control" %>
-  </div>
-  -->
-
-  <div>
-    <%= form.submit "保存する", class: "btn btn-primary" %>
-  </div>
-<% end %>
+</div>

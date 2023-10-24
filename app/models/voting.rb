@@ -35,7 +35,6 @@ class Voting < ApplicationRecord
   def exp_at_delivery
     if self.mode == "default"
       self.deadline
-    elsif self.mode == "security"
     end
   end
 

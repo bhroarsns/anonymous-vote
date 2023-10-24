@@ -1,13 +1,49 @@
 class BallotMailer < ApplicationMailer
-  def ballot
-    voting = params[:voting]
-    ballot = params[:ballot]
-    password = ballot.renew_password(params[:exp])
+  before_action :set_voting_title
+  before_action :set_ballot_address, except: :ballot_deleted
+  before_action :set_exp_password_url_deadline, only: [ :ballot_from_owner, :get_ballot, :renew_ballot ]
 
-    @address = ballot[:voter]
-    @url = voting_path(@voting, v: @address, p: password)
-    @exp = params[:exp]
+  def ballot_from_owner
+    @owner = @voting.user.name
+    @name_of_ballot = @exp ? "投票リンク" : "招待"
 
-    mail(to: @address, subject: "投票用紙が届きました[#{@voting.title}]")
+    mail(to: @address, subject: "「#{@title}」の#{@name_of_ballot}が届きました")
   end
+
+  def get_ballot
+    mail(to: @address, subject: "「#{@title}」の投票リンクが発行されました")
+  end
+
+  def renew_ballot
+    mail(to: @address, subject: "「#{@title}」の投票リンクが再発行されました")
+  end
+
+  def voting_changed
+    mail(to: @address, subject: "「#{@title}」の設定が変更されました")
+  end
+
+  def ballot_deleted
+    @address = params[:address]
+    @owner = @voting.user.name
+    @owner_address = @voting.user.email
+    mail(to: @address, subject: "「#{@title}」の投票権が削除されました")
+  end
+
+  private
+    def set_voting_title
+      @voting = params[:voting]
+      @title = @voting.title
+    end
+
+    def set_ballot_address
+      @ballot = params[:ballot]
+      @address = @ballot[:voter]
+    end
+
+    def set_exp_password_url_deadline
+      @password = @ballot.renew_password(params[:exp])
+      @exp = params[:exp]
+      @url = voting_url(@voting, v: @address, p: @password)
+      @deadline = @voting.deadline
+    end
 end

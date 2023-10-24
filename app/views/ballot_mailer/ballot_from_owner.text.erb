@@ -1,0 +1,13 @@
+<%= @address %>さん
+
+<%= link_to "Anonymous-vote", root_url %>で<%= @owner %>さんが作成した投票「<%= @title %>」の<%= @name_of_ballot %>が届きました.
+
+<% if @exp %>
+  <%= @name_of_ballot %>は<%= link_to "こちら", @url %>です.
+<% else %>
+  <%= link_to "こちら", @url %>のリンクからを取得してください.
+<% end %>
+
+投票の締切は<%= l @deadline, format: :datetime_long %>です.
+
+もし心当たりのない場合, お手数ですがこちらからご連絡ください.

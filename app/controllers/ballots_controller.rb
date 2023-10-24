@@ -1,5 +1,5 @@
 class BallotsController < ApplicationController
-  before_action :set_ballot_and_voting, only: %i[ update destroy deliver ]
+  before_action :set_ballot_and_voting, only: %i[ update destroy deliver redeliver deliver_from_owner ]
 
   # owner only
   def create
@@ -35,6 +35,9 @@ class BallotsController < ApplicationController
   # owner only
   def destroy
     authorize @ballot
+    if @ballot.is_delivered
+      BallotMailer.with(address: @ballot.voter, voting: @voting).ballot_deleted.deliver_later
+    end
     @ballot.destroy!
 
     respond_to do |format|
@@ -43,25 +46,44 @@ class BallotsController < ApplicationController
     end
   end
 
-  # voter or owner
+  # voter only
   def deliver
-    if (current_user == @ballot.voting.user)
-      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot.deliver_later
-      @ballot.update(is_delivered: true)
-      if @ballot.save
-        respond_to do |format|
-          format.html { redirect_back_or_to voters_voting_path(@voting), notice: "送信されました." }
-          format.json { head :no_content }
-        end
-      end
-    elsif authorized_voter?
-      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).ballot.deliver_later
+    if authorized_voter?
+      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).get_ballot.deliver_later
       @ballot.update(is_delivered: true)
       if @ballot.save
         respond_to do |format|
           format.html { redirect_back_or_to @voting, notice: "発行されました. 数分以内にメールが届きます." }
           format.json { head :no_content }
         end
+      end
+    end
+  end
+
+  # voter only
+  def redeliver
+    if authorized_voter?
+      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).renew_ballot.deliver_later
+      @ballot.update(is_delivered: true)
+      if @ballot.save
+        respond_to do |format|
+          format.html { redirect_back_or_to @voting, notice: "再発行されました. 数分以内にメールが届きます." }
+          format.json { head :no_content }
+        end
+      end
+    end
+  end
+
+  # owner only
+  def deliver_from_owner
+    authorize @ballot
+
+    BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
+    @ballot.update(is_delivered: true)
+    if @ballot.save
+      respond_to do |format|
+        format.html { redirect_back_or_to voters_voting_path(@voting), notice: "送信されました." }
+        format.json { head :no_content }
       end
     end
   end

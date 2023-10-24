@@ -1,4 +1,4 @@
-<h2><%= link_to @voting.title, @voting %>/設定</h2>
+<h2><%= link_to @voting.title, voting_path(@voting, v:@voter, p:@password) %>/設定</h2>
 
 <div class="mt-4">
   <%= render "form", voting: @voting %>

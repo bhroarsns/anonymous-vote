@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   resources :ballots, only: [:create, :update, :destroy] do
     member do
       post 'deliver'
+      post 'redeliver'
+      post 'deliver_from_owner'
     end
   end
 

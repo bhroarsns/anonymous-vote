@@ -1,0 +1,9 @@
+<%= @address %>さん
+
+投票「<%= @title %>」の投票リンクを発行しました. リンクの有効期限は<%= l @exp, format: :datetime_long %>です.
+
+投票は<%= link_to "こちら", @url %>から
+
+投票の締切は<%= l @deadline, format: :datetime_long %>です.
+
+もし心当たりのない場合, お手数ですがこちらからご連絡ください.

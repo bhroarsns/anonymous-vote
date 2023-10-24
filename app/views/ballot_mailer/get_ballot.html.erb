@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <%= @address %>さん
+
+    <p>
+      投票「<%= @title %>」の投票リンクを発行しました. リンクの有効期限は<%= l @exp, format: :datetime_long %>です.
+    </p>
+
+    <p>
+      投票は<%= link_to "こちら", @url %>から
+    </p>
+
+    <p>
+      投票の締切は<%= l @deadline, format: :datetime_long %>です.
+    </p>
+
+    <p>
+      もし心当たりのない場合, お手数ですがこちらからご連絡ください.
+    </p>
+  </body>
+</html>

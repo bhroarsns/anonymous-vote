@@ -1,16 +1,14 @@
 class VotingsController < ApplicationController
-  before_action :set_voting, only: %i[ show edit update destroy issue deliver_all voters ]
+  before_action :set_voting_voter_password, only: %i[ show edit update destroy issue deliver_all voters ]
 
   # (method: GET) Show voting page via votings/{uuid}
   def show
-    @ballot = @voting.get_ballot(voter: params[:v], password: params[:p])
+    @ballot = @voting.get_ballot(voter: @voter, password: @password)
 
     unless (current_user == @voting.user) || @ballot
       raise ActionController::RoutingError.new('Not Found')
     end
 
-    @voter = params[:v]
-    @password = params[:p]
     @result = @voting.count_votes
   end
 
@@ -46,7 +44,7 @@ class VotingsController < ApplicationController
     authorize @voting
     respond_to do |format|
       if @voting.update(voting_params)
-        format.html { redirect_to voting_url(@voting), notice: "変更を保存しました." }
+        format.html { redirect_to voting_url(@voting, v:@voter, p:@password), notice: "変更を保存しました." }
         format.json { render :show, status: :ok, location: @voting }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -76,7 +74,7 @@ class VotingsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting), notice: "参加者が追加されました."}
+      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "参加者が追加されました."}
       format.json { head :no_content }
     end
   end
@@ -85,13 +83,13 @@ class VotingsController < ApplicationController
     authorize @voting
 
     @voting.ballots.where(is_delivered: nil).each do |ballot|
-      BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery).ballot.deliver_later
+      BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery).ballot_from_owner.deliver_later
       ballot.update(is_delivered: true)
       ballot.save
     end
 
     respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting), notice: "投票用紙が送信されました."}
+      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "送信されました."}
       format.json { head :no_content }
     end
   end
@@ -102,11 +100,14 @@ class VotingsController < ApplicationController
   end
 
   private
-    def set_voting
+    def set_voting_voter_password
       @voting = Voting.find(params[:id])
+      @voter = params[:v]
+      @password = params[:p]
     end
 
     def voting_params
+      params[:voting][:choices] = params[:voting][:choices].split("\n").uniq.join("\n")
       params.require(:voting).permit(:title, :description, :choices, :deadline, :mode, :config).merge(user_id: current_user.id)
     end
 end

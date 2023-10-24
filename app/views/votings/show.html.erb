@@ -29,15 +29,20 @@
     <% if current_user == @voting.user %>
       <div class="card card-body my-2">
         <h5 class="card-title">管理者画面</h5>
+        <div class="row mb-4 align-items-center">
+          <div class="col-md-auto">
+            <%= link_to voters_voting_path(@voting, v:@voter, p: @password), class: "btn btn-lg btn-primary" do %><i class="bi-people" aria-hidden="true"></i>参加者管理<% end %>
+          </div>
+          <div class="col">
+            参加者の追加・削除、<%= name_of_ballot(@voting) %>のメール配布
+          </div>
+        </div>
         <div class="row">
           <div class="col">
-            <%= link_to voters_voting_path(@voting) do %><i class="bi-people" aria-hidden="true"></i>参加者管理<% end %>
+            <%= link_to edit_voting_path(@voting, v:@voter, p: @password) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
           </div>
           <div class="col">
-            <%= link_to edit_voting_path(@voting) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
-          </div>
-          <div class="col">
-            <%= link_to @voting, data: { turbo_method: :delete, confirm: "この投票を削除します。\nこのことは投票用紙を送信済みの参加者にも通達されます。" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+            <%= link_to @voting, data: { turbo_method: :delete, turbo_confirm: "この投票を削除します。\nこのことは投票用紙を送信済みの参加者にも通達されます。" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
           </div>
         </div>
       </div>
@@ -60,7 +65,7 @@
             <% if @ballot.exp %>
               <div class="row justify-content-end mt-2 align-items-center">
                 <div class="col">パスワードの有効期限が切れています.</div>
-                <div class="col-md-auto"><%= button_to "再発行はこちら", deliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %></div>
+                <div class="col-md-auto"><%= button_to "再発行はこちら", redeliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %></div>
               </div>
             <% else %>
               <div class="row mt-2">
