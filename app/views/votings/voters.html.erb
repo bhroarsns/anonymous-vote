@@ -29,6 +29,10 @@
         <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
         <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
       </div>
+      <div class="card card-body my-2">
+        <h5 class="card-title">3. 参加者一覧をダウンロード(オプション)</h5>
+        <%= button_to "CSVダウンロード", voters_voting_path(@voting, format: :csv), method: :get, class: "btn btn-primary btn-sm" %>
+      </div>
     </section>
   </div>
 

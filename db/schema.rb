@@ -50,6 +50,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_20_104621) do
     t.integer "user_id", null: false
     t.text "description"
     t.text "choices"
+    t.datetime "start"
     t.datetime "deadline"
     t.string "mode"
     t.text "config"

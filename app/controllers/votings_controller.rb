@@ -95,6 +95,13 @@ class VotingsController < ApplicationController
   def voters
     authorize @voting
     @ballots = @voting.ballots
+
+    respond_to do |format|
+      format.html
+      format.csv do |csv|
+        self.send_voters_csv
+      end
+    end
   end
 
   private
@@ -104,8 +111,17 @@ class VotingsController < ApplicationController
       @password = params[:p]
     end
 
+    def send_voters_csv
+      csv_data = CSV.generate do |csv|
+        @voting.ballots.each do |ballot|
+          csv << [ballot.voter]
+        end
+      end
+      send_data(csv_data, filename: "voters.csv")
+    end
+
     def voting_params
       params[:voting][:choices] = params[:voting][:choices].split("\n").uniq.join("\n")
-      params.require(:voting).permit(:title, :description, :choices, :deadline, :mode, :config).merge(user_id: current_user.id)
+      params.require(:voting).permit(:title, :description, :choices, :start, :deadline, :mode, :config).merge(user_id: current_user.id)
     end
 end

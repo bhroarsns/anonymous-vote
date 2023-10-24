@@ -1,7 +1,7 @@
 class BallotMailer < ApplicationMailer
   before_action :set_voting_title
   before_action :set_ballot_address, except: :ballot_deleted
-  before_action :set_exp_password_url_deadline, only: [ :ballot_from_owner, :get_ballot, :renew_ballot ]
+  before_action :set_exp_password_url_start_deadline, only: [ :ballot_from_owner, :get_ballot, :renew_ballot ]
 
   def ballot_from_owner
     @owner = @voting.user.name
@@ -40,10 +40,11 @@ class BallotMailer < ApplicationMailer
       @address = @ballot[:voter]
     end
 
-    def set_exp_password_url_deadline
+    def set_exp_password_url_start_deadline
       @password = @ballot.renew_password(params[:exp])
       @exp = params[:exp]
       @url = voting_url(@voting, v: @address, p: @password)
+      @start = @voting.start
       @deadline = @voting.deadline
     end
 end

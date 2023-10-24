@@ -5,6 +5,7 @@ class CreateVotings < ActiveRecord::Migration[7.1]
       t.references :user, null: false, foreign_key: true
       t.text :description
       t.text :choices
+      t.datetime :start
       t.datetime :deadline
       t.string :mode
       t.text :config

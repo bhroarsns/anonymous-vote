@@ -9,7 +9,9 @@
     <dl class="card card-body my-2">
       <dt>作成者</dt>
         <dd><%= @voting.user.name %></dd>
-      <dt>締切</dt>
+      <dt>投票開始</dt>
+        <dd><%= l @voting.start %></dd>
+      <dt>投票終了</dt>
         <dd><%= l @voting.deadline %></dd>
       <dt>説明</dt>
         <dd><%= @voting.description %></dd>
@@ -60,7 +62,7 @@
         <h5 class="card-title"><%= @ballot.voter %>さん</h5>
         <% if @voting.closed? %>
           <span class="card-item">投票は締め切られました.</span>
-        <% else %>
+        <% elsif @voting.opened? %>
           <div class="row justify-content-end mb-2 align-items-center">
             <% if @ballot.choice %>
               <div class="col">現在の投票先: <%= @ballot.choice %></div>
@@ -88,6 +90,8 @@
               </div>
             <% end %>
           <% end %>
+        <% else %>
+          投票は始まっていません.
         <% end %>
       </div>
     <% end %>
@@ -107,7 +111,9 @@
         </tr>
       <% end %>
     </table>
+  <% elsif @voting.opened? %>
+    投票が進行中です.
   <% else %>
-    投票が進行中です
+    投票は始まっていません.
   <% end %>
 </div>

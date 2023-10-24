@@ -8,6 +8,6 @@
   <%= link_to "こちら", @url %>のリンクからを取得してください.
 <% end %>
 
-投票の締切は<%= l @deadline, format: :datetime_long %>です.
+投票期間は<%= l @start, format: :datetime_long %>から<%= l @deadline, format: :datetime_long %>までです.
 
 もし心当たりのない場合, お手数ですがこちらからご連絡ください.

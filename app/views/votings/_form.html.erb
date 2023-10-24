@@ -24,17 +24,24 @@
       </div>
 
       <div class="mb-4">
-        <%= form.label :choices, "選択肢(改行で追加)", class: "form-label" %><i class="bi-question-circle-fill"></i>
-        <%= form.text_area :choices, class: "form-control" %>
+        <%= form.label :choices, "選択肢(改行で追加)", class: "form-label" %><a href="#help-choices" style="color:black"><i class="bi-question-circle-fill"></i></a>
+        <%= form.text_area :choices, class: "form-control", style: "height: 150px" %>
       </div>
 
       <div class="mb-4">
-        <%= form.label :deadline, "締切(時刻まで入力必須)", class: "form-label" %>
-        <%= form.datetime_field :deadline, class: "form-control" %>
+        投票期間(時刻まで入力必須)
+        <div class="row align-items-center">
+          <%= form.label :start, "開始", class: "form-label col-md-auto" %>
+          <%= form.datetime_field :start, class: "form-control col" %>
+        </div>
+        <div class="row align-items-center">
+          <%= form.label :deadline, "終了", class: "form-label col-md-auto" %>
+          <%= form.datetime_field :deadline, class: "form-control col" %>
+        </div>
       </div>
 
       <div class="mb-4">
-        <%= form.label :mode, "モード", class: "form-label" %><i class="bi-question-circle-fill"></i>
+        <%= form.label :mode, "モード", class: "form-label" %><a href="#help-modes" style="color:black"><i class="bi-question-circle-fill"></i></a>
         <%= form.select :mode, Voting.modes, {}, { class: "form-select" } %>
       </div>
 
@@ -51,14 +58,15 @@
     <% end %>
   </div>
   <div class="col">
-    <div class="card card-body mb-4">
+    <div class="card card-body mb-4" id="help-choices">
       <h5 class="card-title"><i class="bi-question-circle-fill" aria-hidden="true"></i>選択肢について</h5>
       <ul>
         <li>参加者は投票を取り消すことで「無投票」という選択ができます。</li>
         <li>「無投票」とは別に、「棄権」「白票」のいずれかまたは両方を用意するのが一般的です。</li>
+        <li>選択肢の重複は自動的に削除されます。</li>
       </ul>
     </div>
-    <div class="card card-body">
+    <div class="card card-body" id="help-modes">
       <h5 class="card-title"><i class="bi-question-circle-fill" aria-hidden="true"></i>モードについて</h5>
       <dl>
         <dt>「デフォルト」モード</dt>

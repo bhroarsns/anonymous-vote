@@ -46,6 +46,10 @@ class Voting < ApplicationRecord
     end
   end
 
+  def opened?
+    self.start < Time.current
+  end
+
   def closed?
     self.deadline < Time.current
   end
