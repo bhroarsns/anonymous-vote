@@ -8,8 +8,6 @@ class VotingsController < ApplicationController
     unless (current_user == @voting.user) || @ballot
       raise ActionController::RoutingError.new('Not Found')
     end
-
-    @result = @voting.count_votes
   end
 
   # (method: GET) Show voting creation page via votings/new

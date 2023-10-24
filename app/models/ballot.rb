@@ -1,8 +1,11 @@
 class Ballot < ApplicationRecord
   # Ballot is the proxy of voter. Ballot is responsible for authenticating voters, saving vote choices.
 
+  # for email validation
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+
   belongs_to :voting
-  validates :voter, presence: true, uniqueness: {scope: :voting_id}
+  validates :voter, presence: true, uniqueness: {scope: :voting_id}, format: { with: VALID_EMAIL_REGEX }
 
   # Set random uuid as voting id to hide from outsider.
   before_create :set_uuid
