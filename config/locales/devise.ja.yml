@@ -56,8 +56,8 @@ ja:
   errors:
     messages:
       already_confirmed: "はすでに確認が取れています. サインインしてください."
-      confirmation_period_expired: "needs to be confirmed within %{period}, please request a new one"
-      expired: "has expired, please request a new one"
+      confirmation_period_expired: "の確認期限が過ぎています. 確認メールを再送信してください."
+      expired: "は期限切れです. 再送信してください."
       not_found: "は見つかりませんでした."
       not_locked: "はロックされていません."
       not_saved:
