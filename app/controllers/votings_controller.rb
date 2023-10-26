@@ -20,6 +20,7 @@ class VotingsController < ApplicationController
     @num_not_delivered = @voting.count_not_delivered
     @status = @voting.status
     @count = @voting.count_votes
+    @not_for_me = params[:not_for_me]
 
     if @ballot
       @choice = @ballot.choice
@@ -99,9 +100,9 @@ class VotingsController < ApplicationController
   def deliver_all
     authorize @voting
 
-    @voting.ballots.where(is_delivered: nil).each do |ballot|
+    @voting.ballots.where(delivered: nil).each do |ballot|
       BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
-      ballot.update(is_delivered: true)
+      ballot.update(delivered: true)
       ballot.save
     end
 
@@ -113,7 +114,9 @@ class VotingsController < ApplicationController
 
   def voters
     authorize @voting
-    @ballots = @voting.ballots
+    @ballots = @voting.ballots.order(:delivered, delete_requested: :desc, voter: :asc)
+    @num_not_delivered = @ballots.where(delivered: nil).count
+    @num_delete_requested = @ballots.where(delete_requested: true).count
 
     respond_to do |format|
       format.html

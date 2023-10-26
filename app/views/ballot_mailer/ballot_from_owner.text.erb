@@ -10,4 +10,4 @@
 
 投票期間は<%= l @start, format: :datetime_long %>から<%= l @deadline, format: :datetime_long %>までです.
 
-もし心当たりのない場合, お手数ですがこちらからご連絡ください.
+もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.

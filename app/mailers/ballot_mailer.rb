@@ -44,6 +44,7 @@ class BallotMailer < ApplicationMailer
       @password = @ballot.renew_password(params[:exp])
       @exp = params[:exp]
       @url = voting_url(@voting, v: @address, p: @password)
+      @url_not_for_me = voting_url(@voting, v: @address, p: @password, not_for_me: true)
       @start = @voting.start
       @deadline = @voting.deadline
     end

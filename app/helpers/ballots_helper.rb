@@ -1,6 +1,6 @@
 module BallotsHelper
-  def delivery_status(is_delivered)
-    if is_delivered
+  def delivery_status(delivered)
+    if delivered
       "Delivered"
     else
       "Not Delivered"

@@ -21,12 +21,22 @@ class BallotsController < ApplicationController
   def update
     if authorized_voter?
       respond_to do |format|
-        if @ballot.update(choice: params[:choice])
-          format.html { redirect_back_or_to @voting, notice: "投票を受け付けました." }
-          format.json { render :show, status: :ok, location: @ballot }
-        else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @ballot.errors, status: :unprocessable_entity }
+        if params[:delete_requested]
+          if @ballot.update(delete_requested: true)
+            format.html { redirect_back_or_to @voting, notice: "取り消し申請を受け付けました." }
+            format.json { render :show, status: :ok, location: @ballot }
+          else
+            format.html { render :edit, status: :unprocessable_entity }
+            format.json { render json: @ballot.errors, status: :unprocessable_entity }
+          end
+        elsif !@ballot.delete_requested && params[:choice]
+          if @ballot.update(choice: params[:choice])
+            format.html { redirect_back_or_to @voting, notice: "投票を受け付けました." }
+            format.json { render :show, status: :ok, location: @ballot }
+          else
+            format.html { render :edit, status: :unprocessable_entity }
+            format.json { render json: @ballot.errors, status: :unprocessable_entity }
+          end
         end
       end
     end
@@ -35,7 +45,7 @@ class BallotsController < ApplicationController
   # owner only
   def destroy
     authorize @ballot
-    if @ballot.is_delivered
+    if @ballot.delivered
       BallotMailer.with(address: @ballot.voter, voting: @voting).ballot_deleted.deliver_later
     end
     @ballot.destroy!
@@ -50,7 +60,7 @@ class BallotsController < ApplicationController
   def deliver
     if authorized_voter?
       BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).get_ballot.deliver_later
-      @ballot.update(is_delivered: true)
+      @ballot.update(delivered: true)
       if @ballot.save
         respond_to do |format|
           format.html { redirect_back_or_to @voting, notice: "発行されました. 数分以内にメールが届きます." }
@@ -64,7 +74,7 @@ class BallotsController < ApplicationController
   def redeliver
     if authorized_voter?
       BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).renew_ballot.deliver_later
-      @ballot.update(is_delivered: true)
+      @ballot.update(delivered: true)
       if @ballot.save
         respond_to do |format|
           format.html { redirect_back_or_to @voting, notice: "再発行されました. 数分以内にメールが届きます." }
@@ -79,7 +89,7 @@ class BallotsController < ApplicationController
     authorize @ballot
 
     BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
-    @ballot.update(is_delivered: true)
+    @ballot.update(delivered: true)
     if @ballot.save
       respond_to do |format|
         format.html { redirect_back_or_to voters_voting_path(@voting), notice: "送信されました." }
@@ -99,6 +109,6 @@ class BallotsController < ApplicationController
     end
 
     def ballot_params
-      params.require(:ballot).permit(:voting_id, :voter, :password_digest, :choice, :exp)
+      params.require(:ballot).permit(:voting_id, :voter, :password_digest, :choice, :delete_requested, :exp)
     end
 end

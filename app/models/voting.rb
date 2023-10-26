@@ -66,18 +66,18 @@ class Voting < ApplicationRecord
   end
 
   def count_not_delivered
-    self.ballots.where(is_delivered: nil).count
+    self.ballots.where(delivered: nil).count
   end
 
   def count_votes
     # Voter (and also owner) should not be able to see the vote counts until the deadline
     if self.deadline < Time.current
-      self.ballots.where(is_delivered: true).group(:choice).count
+      self.ballots.where(delivered: true).group(:choice).count
     end
   end
 
   def delivered_exist
-    self.ballots.exists?(is_delivered: true)
+    self.ballots.exists?(delivered: true)
   end
 
   private

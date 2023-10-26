@@ -33,9 +33,22 @@
   </div>
 
   <div class="col">
+    <div class="card card-body mb-4">
+      <ul>
+        <% if @num_not_delivered > 0 %>
+          <li>まだリンクを送信していない参加者が<%= @num_not_delivered %>人います。</li>
+        <% else %>
+          <li>参加者全員にリンクを送信済みです。</li>
+        <% end %>
+        <% if @num_delete_requested > 0 %>
+          <li>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>マークの付いている参加者を確認してください。</li>
+        <% end %>
+      </ul>
+    </div>
     <table class="table">
       <thead>
         <tr>
+          <th></th>
           <th>参加者</th>
           <th>送信状況</th>
           <th></th>
@@ -45,11 +58,12 @@
       <tbody>
         <% @ballots.each do |ballot| %>
           <tr>
+            <td><% if ballot.delete_requested %><i class="bi-exclamation-triangle-fill text-danger"></i><% end %></td>
             <td><%= ballot.voter %></td>
-            <td><% if ballot.is_delivered %><i class="bi-check" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>
-            <td><%= link_to deliver_from_owner_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.is_delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
+            <td><% if ballot.delivered %><i class="bi-check-circle-fill text-success" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>
+            <td><%= link_to deliver_from_owner_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
             <td>
-              <% if ballot.is_delivered %>
+              <% if ballot.delivered %>
                 <%= link_to ballot, data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?\nこの参加者には削除されたことがあなたの連絡先とともに通達されます." } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
               <% else %>
                 <%= link_to ballot, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
