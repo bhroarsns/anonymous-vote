@@ -5,13 +5,14 @@
   <div id="mypage.votings">
     <table class="table">
       <thead>
-        <th></th><th>説明</th><th>締切</th>
+        <th></th><th>説明</th><th>投票開始</th><th>投票終了</th>
       </thead>
       <tbody>
-        <% current_user.votings.order(deadline: "DESC").each do |voting|%>
+        <% @votings.each do |voting|%>
           <tr>
             <th><%= link_to voting.title, voting_path(voting) %></th>
             <td><%= voting.description[0,30] %></td>
+            <td><%= l voting.start, format: :short %></td>
             <td><%= l voting.deadline, format: :short %></td>
           </tr>
         <% end %>
