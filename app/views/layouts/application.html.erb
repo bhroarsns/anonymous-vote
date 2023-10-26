@@ -25,6 +25,11 @@
         </ul>
       </div>
     </nav>
+
+    <% if notice %>
+      <div class="alert alert-primary mx-2 my-2" role="alert"><%= notice %></div>
+    <% end %>
+
     <div class="px-2 py-4">
       <%= yield %>
     </div>

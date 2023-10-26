@@ -14,17 +14,17 @@
       <% end %>
 
       <div class="mb-4">
-        <%= form.label :title, "投票タイトル", class: "form-label" %>
+        <%= form.label :title, class: "form-label" %>
         <%= form.text_field :title, class: "form-control" %>
       </div>
 
       <div class="mb-4">
-        <%= form.label :description, "説明", class: "form-label" %>
+        <%= form.label :description, class: "form-label" %>
         <%= form.text_area :description, class: "form-control" %>
       </div>
 
       <div class="mb-4">
-        <%= form.label :choices, "選択肢(改行で追加)", class: "form-label" %><a href="#help-choices" style="color:black"><i class="bi-question-circle-fill"></i></a>
+        <%= form.label :choices, class: "form-label" %>(改行で追加)<a href="#help-choices" style="color:black"><i class="bi-question-circle-fill"></i></a>
         <%= form.text_area :choices, class: "form-control", style: "height: 150px" %>
       </div>
 
@@ -41,7 +41,7 @@
       </div>
 
       <div class="mb-4">
-        <%= form.label :mode, "モード", class: "form-label" %><a href="#help-modes" style="color:black"><i class="bi-question-circle-fill"></i></a>
+        <%= form.label :mode, class: "form-label" %><a href="#help-modes" style="color:black"><i class="bi-question-circle-fill"></i></a>
         <%= form.select :mode, Voting.modes, {}, { class: "form-select" } %>
       </div>
 

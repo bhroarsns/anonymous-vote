@@ -14,3 +14,21 @@ ja:
       datetime: "%Y.%m.%d %H時%M分"
       datetime_long: "%Y年%m月%d日 %H時%M分"
       only_time: "%H:%M"
+  activerecord:
+    models:
+      user: "アカウント"
+      voting: "投票"
+    attributes:
+      user:
+        name: "名前"
+        email: "メールアドレス"
+        password: "パスワード"
+      voting:
+        title: "投票タイトル"
+        user: "作成者"
+        description: "説明"
+        choices: "選択肢"
+        start: "投票開始時刻"
+        deadline: "投票終了時刻"
+        mode: "モード"
+        configs: "設定"

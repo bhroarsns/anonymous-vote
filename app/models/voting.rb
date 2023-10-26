@@ -6,6 +6,9 @@ class Voting < ApplicationRecord
   # Set random uuid as voting id to hide from outsider.
   before_create :set_uuid
 
+  validates :start, comparison: { greater_than: Time.current }
+  validates :deadline, comparison: { greater_than: :start }
+
   def issue_single_ballot(voter)
     self.ballots.create!(voter: voter, password: Ballot.create_password)
   end
