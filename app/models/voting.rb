@@ -6,6 +6,7 @@ class Voting < ApplicationRecord
   # Set random uuid as voting id to hide from outsider.
   before_create :set_uuid
 
+  validates :title, presence: true
   validates :deadline, comparison: { greater_than: :start }
   validates :deadline, comparison: { greater_than: Time.current }
 

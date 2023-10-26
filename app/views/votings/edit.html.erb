@@ -1,5 +1,5 @@
-<h2><%= link_to @voting.title, voting_path(@voting, v:@voter, p:@password) %>/設定</h2>
+<h2 class="col">設定</h2>
 
 <div class="mt-4">
-  <%= render "form", voting: @voting %>
+  <%= render "form", voting: @voting, disable_mode_select: @delivered_exist, show_back: true %>
 </div>
