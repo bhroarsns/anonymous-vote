@@ -2,8 +2,8 @@
 
 <section class="card card-body my-5">
   <h4 class="card-title">作成した投票</h4>
-  <div id="mypage.votings">
-    <table class="table">
+  <div id="mypage.votings" style="overflow: scroll">
+    <table class="table" style="white-space: nowrap">
       <thead>
         <th></th><th>説明</th><th>投票開始</th><th>投票終了</th>
       </thead>
@@ -11,16 +11,16 @@
         <% @votings.each do |voting|%>
           <tr>
             <th><%= link_to voting.title, voting_path(voting) %></th>
-            <td><%= voting.description[0,30] %></td>
+            <td><%= voting.description %></td>
             <td><%= l voting.start, format: :short %></td>
             <td><%= l voting.deadline, format: :short %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <%= link_to new_voting_path, class: "btn btn-primary" do %>
-      新規作成
-    <% end %>
+  </div>
+  <div>
+    <%= link_to "新規作成", new_voting_path, class: "btn btn-primary"%>
   </div>
 </section>
 

@@ -65,7 +65,7 @@
           <div class="card card-body my-2">
             <h5 class="card-title">投票権の取り消し</h5>
             左記の情報を確認し、本当にご自身が参加者でない場合、お手数ですが下のボタンから投票権の取り消しを申請してください。
-            <%= button_to "取り消し申請", ballot_url(@ballot, v:@voter, p:@password, delete_requested: true), method: :put, class: "btn btn-danger" %>
+            <%= button_to "取り消し申請", ballot_url(@ballot, v:@voter, p:@password, delete_requested: true), method: :put, data: { turbo_confirm: "この操作は取り消せません。\n本当に申請しますか？" }, class: "btn btn-danger" %>
           </div>
         <% else %>
           <div class="card card-body my-2">

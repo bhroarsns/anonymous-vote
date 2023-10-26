@@ -29,7 +29,7 @@ class BallotsController < ApplicationController
             format.html { render :edit, status: :unprocessable_entity }
             format.json { render json: @ballot.errors, status: :unprocessable_entity }
           end
-        elsif !@ballot.delete_requested && params[:choice]
+        elsif !@ballot.delete_requested
           if @ballot.update(choice: params[:choice])
             format.html { redirect_back_or_to @voting, notice: "投票を受け付けました." }
             format.json { render :show, status: :ok, location: @ballot }
