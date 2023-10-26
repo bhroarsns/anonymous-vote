@@ -50,7 +50,7 @@
             <td><%= link_to deliver_from_owner_ballot_path(ballot), data: { turbo_method: :post } do%><% if ballot.is_delivered %>再<% end %>送信<i class="bi-send" aria-hidden="true"></i><% end %></td>
             <td>
               <% if ballot.is_delivered %>
-                <%= link_to ballot, data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?\n削除されたことがこの参加者にあなたの連絡先とともに通達されます." } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
+                <%= link_to ballot, data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?\nこの参加者には削除されたことがあなたの連絡先とともに通達されます." } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
               <% else %>
                 <%= link_to ballot, data: { turbo_method: :delete } do %><i class="bi-trash" aria-label="この投票用紙を削除する"></i><% end %>
               <% end %>

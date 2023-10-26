@@ -42,11 +42,16 @@ class Voting < ApplicationRecord
     end
   end
 
+  def security_exp_in_minute
+    3
+  end
+
   def exp_at_vote
-    if self.mode == "default"
+    case self.mode
+    when "default"
       self.deadline
-    elsif self.mode == "security"
-      Time.current + 3.minutes
+    when "security"
+      Time.current + self.security_exp_in_minute.minutes
     end
   end
 
@@ -69,6 +74,10 @@ class Voting < ApplicationRecord
     if self.deadline < Time.current
       self.ballots.where(is_delivered: true).group(:choice).count
     end
+  end
+
+  def delivered_exist
+    self.ballots.exists?(is_delivered: true)
   end
 
   private

@@ -37,7 +37,7 @@ class VotingsController < ApplicationController
   # (method: POST) Create voting with params
   def create
     authorize Voting
-    @voting = Voting.new(create_voting_params)
+    @voting = Voting.new(voting_params)
 
     respond_to do |format|
       if @voting.save
@@ -53,14 +53,14 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting edit page via votings/{uuid}/edit
   def edit
     authorize @voting
-    @delivered_exist = @voting.ballots.exists?(is_delivered: true)
+    @delivered_exist = @voting.delivered_exist
   end
 
   # (method: PUT/PATCH) Edit voting with params
   def update
     authorize @voting
     respond_to do |format|
-      if @voting.update(update_voting_params)
+      if @voting.update(voting_params)
         format.html { redirect_to voting_url(@voting, v:@voter, p:@password), notice: "変更を保存しました." }
         format.json { render :show, status: :ok, location: @voting }
       else
@@ -100,7 +100,7 @@ class VotingsController < ApplicationController
     authorize @voting
 
     @voting.ballots.where(is_delivered: nil).each do |ballot|
-      BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery).ballot_from_owner.deliver_later
+      BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
       ballot.update(is_delivered: true)
       ballot.save
     end
@@ -139,13 +139,8 @@ class VotingsController < ApplicationController
       send_data(csv_data, filename: "voters.csv")
     end
 
-    def create_voting_params
+    def voting_params
       params[:voting][:choices] = params[:voting][:choices].split("\n").uniq.join("\n")
       params.require(:voting).permit(:title, :description, :choices, :start, :deadline, :mode, :config).merge(user_id: current_user.id)
-    end
-
-    def update_voting_params
-      params[:voting][:choices] = params[:voting][:choices].split("\n").uniq.join("\n")
-      params.require(:voting).permit(:title, :description, :choices, :start, :deadline, :config).merge(user_id: current_user.id)
     end
 end
