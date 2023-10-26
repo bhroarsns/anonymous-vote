@@ -1,26 +1,26 @@
-<h2> <%= @voting.title %> </h2>
+<h2> <%= @title %> </h2>
 
 <div class="row">
   <div class="col-md-auto">
     <dl class="card card-body my-2">
       <dt>作成者</dt>
-        <dd><%= @voting.user.name %></dd>
+        <dd><%= @owner_name %></dd>
       <dt>投票開始</dt>
-        <dd><%= l @voting.start %></dd>
+        <dd><%= l @start %></dd>
       <dt>投票終了</dt>
-        <dd><%= l @voting.deadline %></dd>
+        <dd><%= l @deadline %></dd>
       <dt>説明</dt>
-        <dd><%= @voting.description %></dd>
+        <dd><%= @description %></dd>
       <dt>選択肢</dt>
         <dd>
           <ul>
-            <% @voting.get_choices.each do |choice| %>
+            <% @choices.each do |choice| %>
               <li><%= choice %></li>
             <% end %>
           </ul>
         </dd>
       <dt>参加人数</dt>
-        <dd><%= @voting.ballots.count %>人</dd>
+        <dd><%= @num_voters %>人</dd>
     </dl>
   </div>
   <div class="col">
@@ -31,10 +31,10 @@
           <div class="col-md-auto">
             <%= link_to voters_voting_path(@voting, v:@voter, p: @password), class: "btn btn-lg btn-primary position-relative" do %>
               <i class="bi-people" aria-hidden="true"></i>参加者管理
-              <% if @voting.count_not_delivered > 0 %>
+              <% if @num_not_delivered > 0 %>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  <%= @voting.count_not_delivered %>
-                  <span class="visually-hidden">まだ<%= name_of_ballot(@voting) %>を送信していない参加者が<%= @voting.count_not_delivered %>人います</span>
+                  <%= @num_not_delivered %>
+                  <span class="visually-hidden">まだ<%= name_of_ballot(@voting) %>を送信していない参加者が<%= @num_not_delivered %>人います</span>
                 </span>
               <% end %>
             <% end %>
@@ -56,19 +56,20 @@
     <% if @ballot %>
       <div class="card card-body my-2">
         <h5 class="card-title"><%= @ballot.voter %>さん</h5>
-        <% if @voting.closed? %>
-          <span class="card-item">投票は締め切られました.</span>
-        <% elsif @voting.opened? %>
+        <% case @status %>
+        <% when "not opened" %>
+          投票は始まっていません.
+        <% when "opened" %>
           <div class="row justify-content-end mb-2 align-items-center">
-            <% if @ballot.choice %>
-              <div class="col">現在の投票先: <%= @ballot.choice %></div>
+            <% if @choice %>
+              <div class="col">現在の投票先: <%= @choice %></div>
               <div class="col-md-auto"><%= button_to "投票を取り消す", ballot_url(@ballot, v:@voter, p:@password), method: :put , class: "btn btn-sm btn-danger" %></div>
             <% else %>
               <div class="col">まだ投票していません</div>
             <% end %>
           </div>
-          <% if @ballot.expired? %>
-            <% if @ballot.exp %>
+          <% if @expired %>
+            <% if @exp %>
               <div class="row justify-content-end mt-2 align-items-center">
                 <div class="col">パスワードの有効期限が切れています.</div>
                 <div class="col-md-auto"><%= button_to "再発行はこちら", redeliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %></div>
@@ -81,13 +82,13 @@
           <% else %>
             <%= form_with url: ballot_url(@ballot, v:@voter, p:@password), local: true, method: :put do |form|%>
               <div class="row justify-content-end mt-2 align-items-center">
-                <div class="col"><%= form.select :choice, @voting.get_choices, { selected: @ballot.choice }, { class: "form-select" }%></div>
+                <div class="col"><%= form.select :choice, @choices, { selected: @choice }, { class: "form-select" }%></div>
                 <div class="col-md-auto"><%= form.submit "投票する", class: "btn btn-primary" %></div>
               </div>
             <% end %>
           <% end %>
-        <% else %>
-          投票は始まっていません.
+        <% when "closed" %>
+          <span class="card-item">投票は締め切られました.</span>
         <% end %>
       </div>
     <% end %>
@@ -96,20 +97,21 @@
 
 <div class="card card-body my-2">
   <h3 class="card-title">投票結果</h3>
-  <% if @voting.closed? %>
-    <% if @voting.count_not_delivered > 0 %>
-      <strong class="text-danger"><%= name_of_ballot(@voting) %>が送信されなかった参加者が<%= @voting.count_not_delivered %>人います.</strong>
+  <% case @status %>
+  <% when "not opened" %>
+    投票は始まっていません.
+  <% when "opened" %>
+    投票が進行中です.
+  <% when "closed" %>
+    <% if @num_not_delivered > 0 %>
+      <strong class="text-danger"><%= name_of_ballot(@voting) %>が送信されなかった参加者が<%= @num_not_delivered %>人います.</strong>
     <% end %>
     <table class="table table-bordered">
-      <% @voting.count_votes.each do |choice, num| %>
+      <% @count.each do |choice, num| %>
         <tr>
           <th><%= format_choice(choice) %></th><td><%= num %></td>
         </tr>
       <% end %>
     </table>
-  <% elsif @voting.opened? %>
-    投票が進行中です.
-  <% else %>
-    投票は始まっていません.
   <% end %>
 </div>

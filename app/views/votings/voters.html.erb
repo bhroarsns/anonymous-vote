@@ -43,7 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @voting.ballots.each do |ballot| %>
+        <% @ballots.each do |ballot| %>
           <tr>
             <td><%= ballot.voter %></td>
             <td><% if ballot.is_delivered %><i class="bi-check" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>

@@ -49,12 +49,14 @@ class Voting < ApplicationRecord
     end
   end
 
-  def opened?
-    self.start < Time.current
-  end
-
-  def closed?
-    self.deadline < Time.current
+  def status
+    if Time.current < self.start
+      "not opened"
+    elsif Time.current < self.deadline
+      "opened"
+    else
+      "closed"
+    end
   end
 
   def count_not_delivered

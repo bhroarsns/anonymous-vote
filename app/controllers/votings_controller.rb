@@ -4,9 +4,27 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting page via votings/{uuid}
   def show
     @ballot = @voting.get_ballot(voter: @voter, password: @password)
+    @owner = @voting.user
 
-    unless (current_user == @voting.user) || @ballot
+    unless (current_user == @owner) || @ballot
       raise ActionController::RoutingError.new('Not Found')
+    end
+
+    @title = @voting.title
+    @owner_name = @owner.name
+    @start = @voting.start
+    @deadline = @voting.deadline
+    @description = @voting.description
+    @choices = @voting.get_choices
+    @num_voters = @voting.ballots.count
+    @num_not_delivered = @voting.count_not_delivered
+    @status = @voting.status
+    @count = @voting.count_votes
+
+    if @ballot
+      @choice = @ballot.choice
+      @expired = @ballot.expired
+      @exp = @ballot.exp
     end
   end
 
