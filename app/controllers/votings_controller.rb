@@ -1,4 +1,5 @@
 class VotingsController < ApplicationController
+  # All request except :new have to have this callback to retain :voter and :password when owner opens their own vote link and move to other page
   before_action :set_voting_voter_password, only: %i[ show edit update destroy issue deliver_all voters ]
 
   # (method: GET) Show voting page via votings/{uuid}
@@ -55,7 +56,8 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting edit page via votings/{uuid}/edit
   def edit
     authorize @voting
-    @delivered_exist = @voting.delivered_exist
+    @disable_choices_change = @voting.disable_choices_change?
+    @disable_mode_select = @voting.disable_mode_select?
   end
 
   # (method: PUT/PATCH) Edit voting with params
@@ -63,9 +65,12 @@ class VotingsController < ApplicationController
     authorize @voting
     respond_to do |format|
       if @voting.update(voting_params)
+        logger.debug @voting.saved_changes
         format.html { redirect_to voting_url(@voting, v:@voter, p:@password), notice: "変更を保存しました." }
         format.json { render :show, status: :ok, location: @voting }
       else
+        @delivered_exist = @voting.delivered_exist?
+        @start = @voting.start
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @voting.errors, status: :unprocessable_entity }
       end
@@ -84,6 +89,23 @@ class VotingsController < ApplicationController
     end
   end
 
+  # (method: GET) manage voters of voting
+  def voters
+    authorize @voting
+    @ballots = @voting.ballots.order(:delivered, delete_requested: :desc, voter: :asc)
+    @num_voters = @ballots.count
+    @num_not_delivered = @voting.count_not_delivered
+    @num_delete_requested = @voting.count_delete_request
+
+    respond_to do |format|
+      format.html
+      format.csv do |csv|
+        self.send_voters_csv
+      end
+    end
+  end
+
+  # (method: post) issue ballots from voters page
   def issue
     authorize @voting
     if params[:file]
@@ -98,6 +120,7 @@ class VotingsController < ApplicationController
     end
   end
 
+  # (method: post) deliver all ballots from voters page
   def deliver_all
     authorize @voting
 
@@ -110,21 +133,6 @@ class VotingsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "送信されました."}
       format.json { head :no_content }
-    end
-  end
-
-  def voters
-    authorize @voting
-    @ballots = @voting.ballots.order(:delivered, delete_requested: :desc, voter: :asc)
-    @num_voters = @ballots.count
-    @num_not_delivered = @voting.count_not_delivered
-    @num_delete_requested = @voting.count_delete_request
-
-    respond_to do |format|
-      format.html
-      format.csv do |csv|
-        self.send_voters_csv
-      end
     end
   end
 
@@ -144,8 +152,11 @@ class VotingsController < ApplicationController
       send_data(csv_data, filename: "voters.csv")
     end
 
+    # remove choice duplication
     def voting_params
-      params[:voting][:choices] = params[:voting][:choices].split("\n").uniq.join("\n")
+      if params[:voting][:choices]
+        params[:voting][:choices] = params[:voting][:choices].split("\n").uniq.join("\n")
+      end
       params.require(:voting).permit(:title, :description, :choices, :start, :deadline, :mode, :config).merge(user_id: current_user.id)
     end
 end

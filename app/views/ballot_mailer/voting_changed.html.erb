@@ -7,23 +7,10 @@
     <%= @address %>さん
 
     <p>
-      <%= link_to "Anonymous-vote", root_url %>で<%= @owner %>さんが作成した投票「<%= @title %>」の<%= @name_of_ballot %>が届きました.
+      Anonymous-vote上の投票「<%= @title %>」に変更がありました。
     </p>
 
-    <p>
-      <% if @exp %>
-        <%= @name_of_ballot %>は<%= link_to "こちら", @url %>です.
-      <% else %>
-        <%= link_to "こちら", @url %>のリンクからを取得してください.
-      <% end %>
-    </p>
+    <%= changes %>
 
-    <p>
-      投票の締切は<%= l @deadline, format: :datetime_long %>です.
-    </p>
-
-    <p>
-      もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.
-    </p>
   </body>
 </html>

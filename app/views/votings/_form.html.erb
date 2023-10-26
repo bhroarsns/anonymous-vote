@@ -26,7 +26,7 @@
 
       <div class="mb-4">
         <%= form.label :choices, class: "form-label" %><a href="#help-choices" style="color:black"><i class="bi-question-circle-fill"></i></a>
-        <%= form.text_area :choices, class: "form-control", style: "height: 150px" %>
+        <%= form.text_area :choices, { disabled: disable_choices_change, class: "form-control", style: "height: 150px" } %>
         <div class="form-text">改行で追加</div>
       </div>
 
@@ -44,11 +44,7 @@
 
       <div class="mb-4">
         <%= form.label :mode, class: "form-label" %><a href="#help-modes" style="color:black"><i class="bi-question-circle-fill"></i></a>
-        <% if disable_mode_select %>
-          <%= form.select :mode, Voting.modes, {}, { disabled: true, class: "form-select" } %>
-        <% else %>
-          <%= form.select :mode, Voting.modes, {}, { class: "form-select" } %>
-        <% end %>
+        <%= form.select :mode, Voting.modes, {}, { disabled: disable_mode_select, class: "form-select" } %>
       </div>
 
       <!--
@@ -71,6 +67,7 @@
   <div class="col">
     <div class="card card-body mb-4" id="help-choices">
       <h5 class="card-title"><i class="bi-question-circle-fill" aria-hidden="true"></i>選択肢について</h5>
+      <span class="text-danger mb-2">投票開始後は選択肢を変更できません</span>
       <ul>
         <li>選択肢の重複は自動的に削除されます。</li>
         <li>参加者は投票しない、あるいは投票を取り消すことで「無投票」という選択ができます。</li>

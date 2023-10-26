@@ -32,3 +32,11 @@ ja:
         deadline: "投票終了時刻"
         mode: "モード"
         configs: "設定"
+    errors:
+      models:
+        voting:
+          attributes:
+            start:
+              less_than: "は投票終了時刻より前を指定してください"
+            deadline:
+              greater_than: "は現在時刻より後を指定してください"

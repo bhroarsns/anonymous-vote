@@ -2,37 +2,40 @@
 
 <div class="row">
   <div class="col-md-auto">
-    <section id="console">
-      <div class="card card-body my-2 container">
-        <h5 class="card-title">1. 参加者を追加</h5>
-        <%= form_with url: issue_voting_path(@voting, v:@voter, p:@password), multipart: true, class: "" do |form| %>
-          <div class="mb-4">
-              <%= form.label :email, "個別に追加", class: "form-label" %>
-              <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
-          </div>
 
-          <div class="mb-4">
-            <%= form.label :file, "一括で追加(CSV)", class: "form-label" %>
-            <%= form.file_field :file, class:"form-control"%>
-          </div>
+    <div class="card card-body my-2 container">
+      <h5 class="card-title">1. 参加者を追加</h5>
+      <%= form_with url: issue_voting_path(@voting, v:@voter, p:@password), multipart: true, class: "" do |form| %>
+        <div class="mb-4">
+            <%= form.label :email, "個別に追加", class: "form-label" %>
+            <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
+        </div>
 
-          <div>
-            <%= form.submit "参加者を追加", class: "btn btn-primary btn-sm" %>
-          </div>
-        <% end %>
-      </div>
-      <div class="card card-body my-2">
-        <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
-        <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
-      </div>
-      <div class="card card-body my-2">
-        <h5 class="card-title">3. 参加者一覧をダウンロード(オプション)</h5>
-        <%= button_to "CSVダウンロード", voters_voting_path(@voting, format: :csv), method: :get, class: "btn btn-primary btn-sm" %>
-      </div>
-    </section>
+        <div class="mb-4">
+          <%= form.label :file, "一括で追加(CSV)", class: "form-label" %>
+          <%= form.file_field :file, class:"form-control"%>
+        </div>
+
+        <div>
+          <%= form.submit "参加者を追加", class: "btn btn-primary btn-sm" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="card card-body my-2">
+      <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
+      <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
+    </div>
+
+    <div class="card card-body my-2">
+      <h5 class="card-title">3. 参加者一覧をダウンロード(オプション)</h5>
+      <%= button_to "CSVダウンロード", voters_voting_path(@voting, format: :csv), method: :get, class: "btn btn-primary btn-sm" %>
+    </div>
+  
   </div>
 
   <div class="col">
+
     <% if @num_voters > 0 %>
       <div class="card card-body mb-4">
         <ul>
@@ -47,6 +50,7 @@
         </ul>
       </div>
     <% end %>
+
     <div style="overflow: scroll">
       <table class="table" style="white-space: nowrap">
         <thead>
@@ -77,5 +81,6 @@
         </tbody>
       </table>
     </div>
+    
   </div>
 </div>

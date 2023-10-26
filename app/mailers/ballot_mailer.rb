@@ -19,6 +19,7 @@ class BallotMailer < ApplicationMailer
   end
 
   def voting_changed
+    @changes = params[:changes]
     mail(to: @address, subject: "「#{@title}」の設定が変更されました")
   end
 
