@@ -24,12 +24,13 @@
       </div>
 
       <div class="mb-4">
-        <%= form.label :choices, class: "form-label" %>(改行で追加)<a href="#help-choices" style="color:black"><i class="bi-question-circle-fill"></i></a>
+        <%= form.label :choices, class: "form-label" %><a href="#help-choices" style="color:black"><i class="bi-question-circle-fill"></i></a>
         <%= form.text_area :choices, class: "form-control", style: "height: 150px" %>
+        <div class="form-text">改行で追加</div>
       </div>
 
       <div class="mb-4">
-        投票期間(時刻まで入力必須)
+        投票期間
         <div class="row align-items-center">
           <%= form.label :start, "開始", class: "form-label col-md-auto" %>
           <%= form.datetime_field :start, class: "form-control col" %>
@@ -38,6 +39,7 @@
           <%= form.label :deadline, "終了", class: "form-label col-md-auto" %>
           <%= form.datetime_field :deadline, class: "form-control col" %>
         </div>
+        <div class="form-text">時刻まで入力必須</div>
       </div>
 
       <div class="mb-4">
