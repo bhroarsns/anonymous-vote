@@ -37,6 +37,6 @@ ja:
         voting:
           attributes:
             start:
-              less_than: "は投票終了時刻より前を指定してください"
+              less_than: "は投票終了時刻より前を指定してください."
             deadline:
-              greater_than: "は現在時刻より後を指定してください"
+              greater_than: "は現在時刻より後を指定してください."

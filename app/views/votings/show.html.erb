@@ -51,7 +51,7 @@
             <%= link_to edit_voting_path(@voting, v:@voter, p: @password) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
           </div>
           <div class="col">
-            <%= link_to @voting, data: { turbo_method: :delete, turbo_confirm: "この操作は取り消せません。本当に削除しますか？" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+            <%= link_to @voting, data: { turbo_method: :delete, turbo_confirm: "この操作は取り消せません。\n本当に削除しますか？" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
           </div>
         </div>
       </div>
@@ -74,20 +74,20 @@
             <h5 class="card-title"><%= @ballot.voter %>さん</h5>
             <% case @status %>
             <% when "not opened" %>
-              投票は始まっていません.
+              投票は始まっていません。
             <% when "opened" %>
               <div class="row justify-content-end mb-2 align-items-center">
                 <% if @choice %>
                   <div class="col">現在の投票先: <%= @choice %></div>
                   <div class="col-md-auto"><%= button_to "投票を取り消す", ballot_url(@ballot, v:@voter, p:@password), method: :put , class: "btn btn-sm btn-danger" %></div>
                 <% else %>
-                  <div class="col">まだ投票していません</div>
+                  <div class="col">まだ投票していません。</div>
                 <% end %>
               </div>
               <% if @expired %>
                 <% if @exp %>
                   <div class="row justify-content-end mt-2 align-items-center">
-                    <div class="col">パスワードの有効期限が切れています.</div>
+                    <div class="col">パスワードの有効期限が切れています。</div>
                     <div class="col-md-auto"><%= button_to "再発行はこちら", redeliver_ballot_path(@ballot, v:@voter, p:@password), class: "btn btn-primary" %></div>
                   </div>
                 <% else %>
@@ -104,7 +104,7 @@
                 <% end %>
               <% end %>
             <% when "closed" %>
-              <span class="card-item">投票は締め切られました.</span>
+              <span class="card-item">投票は締め切られました。</span>
             <% end %>
           </div>
         <% end %>
@@ -117,12 +117,12 @@
   <h3 class="card-title">投票結果</h3>
   <% case @status %>
   <% when "not opened" %>
-    投票は始まっていません.
+    投票は始まっていません。
   <% when "opened" %>
     投票が進行中です.
   <% when "closed" %>
     <% if @num_not_delivered > 0 %>
-      <strong class="text-danger"><%= name_of_ballot(@voting) %>が送信されなかった参加者が<%= @num_not_delivered %>人います.</strong>
+      <strong class="text-danger"><%= name_of_ballot(@voting) %>が送信されなかった参加者が<%= @num_not_delivered %>人います。</strong>
     <% end %>
     <table class="table table-bordered">
       <% @count.each do |choice, num| %>

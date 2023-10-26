@@ -9,9 +9,22 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+
+  rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from ActionController::RoutingError, with: :render_404
+  rescue_from Exception, with: :render_500
+
+  def render_404
+    redirect_to root_path, alert: "ページが見つかりません."
+  end
+
+  def render_500
+    redirect_to root_path, alert: "エラーが発生しました."
+  end
+
   private
     def sign_in_required
-      redirect_to new_user_session_url unless user_signed_in?
+      redirect_to new_user_session_url, alert: "サインインしてください." unless user_signed_in?
     end
 
   protected

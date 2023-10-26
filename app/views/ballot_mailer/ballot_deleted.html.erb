@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
-    <%= @address %>さん
+<%= @address %>さん
 
-    <p>
-      投票「<%= @title %>」でのあなたの投票権が削除されました.
-    </p>
+<p>
+  投票「<%= @title %>」でのあなたの投票権が削除されました.
+</p>
 
-    <p>
-      不当な場合, 投票の管理者である<%= @owner %>さん(<%= @owner_address %>)に連絡してください.
-    </p>
-  </body>
-</html>
+<p>
+  不当な場合, 投票の管理者である<%= @owner %>さん(<%= @owner_address %>)に連絡してください.
+</p>

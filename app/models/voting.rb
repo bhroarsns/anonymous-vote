@@ -155,13 +155,13 @@ class Voting < ApplicationRecord
 
     def cannot_change_choices_after_start
       if self.disable_choices_change? && self.will_save_change_to_choices?
-        errors.add(:choices, "投票開始後、リンク送信済みの参加者がいる場合は選択肢を変更できません")
+        errors.add(:choices, "投票開始後, リンク送信済みの参加者がいる場合は選択肢を変更できません.")
       end
     end
 
     def cannot_change_mode_when_delivered_exist
       if self.disable_mode_select? && self.will_save_change_to_mode?
-        errors.add(:mode, "リンク送信済みの参加者がいる場合、モードは変更できません")
+        errors.add(:mode, "リンク送信済みの参加者がいる場合, モードは変更できません.")
       end
     end
 end

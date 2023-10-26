@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
-    <%= @address %>さん
+<%= @address %>さん
 
-    <p>
-      <%= link_to "Anonymous-vote", root_url %>で<%= @owner %>さんが作成した投票「<%= @title %>」の<%= @name_of_ballot %>が届きました.
-    </p>
+<p>
+  <%= link_to "Anonymous-vote", root_url %>で<%= @owner %>さんが作成した投票「<%= @title %>」の<%= @name_of_ballot %>が届きました.
+</p>
 
-    <p>
-      <% if @exp %>
-        <%= @name_of_ballot %>は<%= link_to "こちら", @url %>です.
-      <% else %>
-        <%= link_to "こちら", @url %>のリンクからを取得してください.
-      <% end %>
-    </p>
+<p>
+  <% if @exp %>
+    <%= @name_of_ballot %>は<%= link_to "こちら", @url %>です.
+  <% else %>
+    <%= link_to "こちら", @url %>のリンクからを取得してください.
+  <% end %>
+</p>
 
-    <p>
-      投票期間は<%= l @start, format: :datetime_long %>から<%= l @deadline, format: :datetime_long %>までです.
-    </p>
+<p>
+  投票期間は<%= l @start, format: :datetime_long %>から<%= l @deadline, format: :datetime_long %>までです.
+</p>
 
-    <p>
-      もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.
-    </p>
-  </body>
-</html>
+<p>
+  もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.
+</p>

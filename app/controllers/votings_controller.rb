@@ -1,4 +1,5 @@
 class VotingsController < ApplicationController
+  before_action :sign_in_required, only: [:new]
   # All request except :new have to have this callback to retain :voter and :password when owner opens their own vote link and move to other page
   before_action :set_voting_voter_password, only: %i[ show edit update destroy issue deliver_all voters ]
 
@@ -8,7 +9,7 @@ class VotingsController < ApplicationController
     @owner = @voting.user
 
     unless (current_user == @owner) || @ballot
-      raise ActionController::RoutingError.new('Not Found')
+      redirect_to root_path, alert: "ページが見つかりません."
     end
 
     @title = @voting.title

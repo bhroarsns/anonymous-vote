@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
-    <%= @owner %>さん
+<%= @owner %>さん
 
-    <p>
-      あなたの作成した投票「<%= @title %>」において、参加者<%= @address %>さんから投票権の取り消し申請がありました。
-    </p>
+<p>
+  あなたの作成した投票「<%= @title %>」において、参加者<%= @address %>さんから投票権の取り消し申請がありました。
+</p>
 
-    <p>
-      <%= link_to "参加者管理画面", voters_voting_url(@voting) %>から確認してください。
-    </p>
-  </body>
-</html>
+<p>
+  <%= link_to "参加者管理画面", voters_voting_url(@voting) %>から確認してください。
+</p>
