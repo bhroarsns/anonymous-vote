@@ -33,18 +33,20 @@
   </div>
 
   <div class="col">
-    <div class="card card-body mb-4">
-      <ul>
-        <% if @num_not_delivered > 0 %>
-          <li>まだリンクを送信していない参加者が<%= @num_not_delivered %>人います。</li>
-        <% else %>
-          <li>参加者全員にリンクを送信済みです。</li>
-        <% end %>
-        <% if @num_delete_requested > 0 %>
-          <li>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>マークの付いている参加者を確認してください。</li>
-        <% end %>
-      </ul>
-    </div>
+    <% if @num_voters > 0 %>
+      <div class="card card-body mb-4">
+        <ul>
+          <% if @num_not_delivered > 0 %>
+            <li>まだリンクを送信していない参加者が<%= @num_not_delivered %>人います。</li>
+          <% else %>
+            <li>参加者全員にリンクを送信済みです。</li>
+          <% end %>
+          <% if @num_delete_requested > 0 %>
+            <li>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>マークの付いている参加者を確認してください。</li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
     <div style="overflow: scroll">
       <table class="table" style="white-space: nowrap">
         <thead>

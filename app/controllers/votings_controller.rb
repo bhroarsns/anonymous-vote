@@ -116,6 +116,7 @@ class VotingsController < ApplicationController
   def voters
     authorize @voting
     @ballots = @voting.ballots.order(:delivered, delete_requested: :desc, voter: :asc)
+    @num_voters = @ballots.count
     @num_not_delivered = @voting.count_not_delivered
     @num_delete_requested = @voting.count_delete_request
 
