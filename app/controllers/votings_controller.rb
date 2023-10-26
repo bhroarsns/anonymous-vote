@@ -23,7 +23,7 @@ class VotingsController < ApplicationController
 
     if @ballot
       @choice = @ballot.choice
-      @expired = @ballot.expired
+      @expired = @ballot.expired?
       @exp = @ballot.exp
     end
   end
