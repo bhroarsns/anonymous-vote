@@ -48,7 +48,7 @@
             <%= link_to edit_voting_path(@voting, v:@voter, p: @password) do %><i class="bi-gear" aria-hidden="true"></i>設定<% end %>
           </div>
           <div class="col">
-            <%= link_to @voting, data: { turbo_method: :delete, turbo_confirm: "この投票を削除します。\nこのことは投票用紙を送信済みの参加者にも通達されます。" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
+            <%= link_to @voting, data: { turbo_method: :delete, turbo_confirm: "この操作は取り消せません。本当に削除しますか？" } do %><i class="bi-trash" aria-hidden="true"></i>この投票を削除する<% end %>
           </div>
         </div>
       </div>
