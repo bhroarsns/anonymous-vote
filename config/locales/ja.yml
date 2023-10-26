@@ -32,6 +32,8 @@ ja:
         deadline: "投票終了時刻"
         mode: "モード"
         configs: "設定"
+      ballot:
+        voter: 参加者
     errors:
       models:
         voting:

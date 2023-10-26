@@ -1,7 +1,7 @@
 class VotingsController < ApplicationController
   before_action :sign_in_required, only: [:new]
   # All request except :new have to have this callback to retain :voter and :password when owner opens their own vote link and move to other page
-  before_action :set_voting_voter_password, only: %i[ show edit update destroy issue deliver_all voters ]
+  before_action :set_voting_voter_password, only: %i[ show edit update destroy issue_single issue deliver_all voters ]
 
   # (method: GET) Show voting page via votings/{uuid}
   def show
@@ -106,17 +106,35 @@ class VotingsController < ApplicationController
     end
   end
 
+  # (method: post) issue single ballot from voters page
+  def issue_single
+    authorize @voting
+
+    begin
+      @voting.issue_single_ballot(params[:email])
+      respond_to do |format|
+        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "参加者が追加されました." }
+        format.json { head :no_content }
+      end
+    rescue ActiveRecord::RecordInvalid => _
+      respond_to do |format|
+        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), alert: "#{params[:email]}はすでに参加者に含まれています." }
+        format.json { head :no_content }
+      end
+    end
+  end
+
   # (method: post) issue ballots from voters page
   def issue
     authorize @voting
-    if params[:file]
-      @voting.issue_ballots(params[:file])
-    else
-      @voting.issue_single_ballot(params[:email])
-    end
-
+    
+    response = @voting.issue_ballots(params[:file])
     respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "参加者が追加されました."}
+      format.html {
+        redirect_to voters_voting_path(@voting, v:@voter, p:@password),
+        notice: response[:added] > 0 ? "参加者が#{response[:added]}人追加されました." : nil,
+        alert: response[:removed].any? ? "#{response[:removed].join(', ')}はすでに参加者に含まれています." : nil
+      }
       format.json { head :no_content }
     end
   end

@@ -22,9 +22,20 @@ class Voting < ApplicationRecord
   end
 
   def issue_ballots(file)
+    added = 0
+    removed = []
     CSV.foreach(file.path) do |row|
-      self.ballots.create!(voter: row[0], password: Ballot.create_password)
+      begin
+        self.ballots.create!(voter: row[0], password: Ballot.create_password)
+        added += 1
+      rescue ActiveRecord::RecordInvalid => _
+        removed << row[0]
+      end
     end
+    {
+      added: added,
+      removed: removed
+    }
   end
 
 

@@ -19,6 +19,10 @@ class VotingPolicy < ApplicationPolicy
     owner_signed_in?
   end
 
+  def issue_single?
+    owner_signed_in?
+  end
+
   def issue?
     owner_signed_in?
   end
