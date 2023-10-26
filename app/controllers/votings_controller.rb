@@ -18,6 +18,7 @@ class VotingsController < ApplicationController
     @choices = @voting.get_choices
     @num_voters = @voting.ballots.count
     @num_not_delivered = @voting.count_not_delivered
+    @num_delete_requested = @voting.count_delete_request
     @status = @voting.status
     @count = @voting.count_votes
     @not_for_me = params[:not_for_me]
@@ -115,8 +116,8 @@ class VotingsController < ApplicationController
   def voters
     authorize @voting
     @ballots = @voting.ballots.order(:delivered, delete_requested: :desc, voter: :asc)
-    @num_not_delivered = @ballots.where(delivered: nil).count
-    @num_delete_requested = @ballots.where(delete_requested: true).count
+    @num_not_delivered = @voting.count_not_delivered
+    @num_delete_requested = @voting.count_delete_request
 
     respond_to do |format|
       format.html

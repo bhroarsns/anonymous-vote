@@ -28,16 +28,18 @@
     <% if current_user == @voting.user %>
       <div class="card card-body my-2">
         <h5 class="card-title">管理者画面</h5>
+        <div class="mb-2">
+          <% if @num_not_delivered > 0 %>
+            <strong class="text-danger">まだ<%= name_of_ballot(@voting) %>を送信していない参加者が<%= @num_not_delivered %>人います。</strong>
+          <% end %>
+          <% if @num_delete_requested > 0 %>
+            <strong class="text-danger">投票権の削除申請が<%= @num_delete_requested %>件届いています。</strong>
+          <% end %>
+        </div>
         <div class="row mb-4 align-items-center">
           <div class="col-md-auto">
             <%= link_to voters_voting_path(@voting, v:@voter, p: @password), class: "btn btn-lg btn-primary position-relative" do %>
               <i class="bi-people" aria-hidden="true"></i>参加者管理
-              <% if @num_not_delivered > 0 %>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  <%= @num_not_delivered %>
-                  <span class="visually-hidden">まだ<%= name_of_ballot(@voting) %>を送信していない参加者が<%= @num_not_delivered %>人います</span>
-                </span>
-              <% end %>
             <% end %>
           </div>
           <div class="col">

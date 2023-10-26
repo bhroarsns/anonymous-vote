@@ -69,6 +69,10 @@ class Voting < ApplicationRecord
     self.ballots.where(delivered: nil).count
   end
 
+  def count_delete_request
+    self.ballots.where(delete_requested: true).count
+  end
+
   def count_votes
     # Voter (and also owner) should not be able to see the vote counts until the deadline
     if self.deadline < Time.current
