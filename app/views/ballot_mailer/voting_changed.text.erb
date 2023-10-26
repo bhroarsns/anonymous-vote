@@ -1,0 +1,18 @@
+<%= @address %>さん
+
+Anonymous-vote上の投票「<%= @title %>」に変更がありました。
+
+<% if @changes[:title] %>
+  ・投票タイトルが「<%= @changes[:title][0] %>」から「<%= @changes[:title][1] %>」に変更になりました。
+<% end %>
+<% if @changes[:description] %>
+  ・説明が「<%= @changes[:description][0] %>」から「<%= @changes[:description][1] %>」に変更になりました。
+<% end %>
+<% if @changes[:start] %>
+  ・投票開始時刻が<%= l @changes[:start][0], format: :datetime_long %>から<%= l @changes[:start][1], format: :datetime_long %>に変更になりました。
+<% end %>
+<% if @changes[:end] %>
+  ・投票終了時刻が<%= l @changes[:end][0], format: :datetime_long %>から<%= l @changes[:end][1], format: :datetime_long %>に変更になりました。
+<% end %>
+
+以前お送りした投票用リンクからご確認ください。

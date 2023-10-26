@@ -56,8 +56,6 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting edit page via votings/{uuid}/edit
   def edit
     authorize @voting
-    @disable_choices_change = @voting.disable_choices_change?
-    @disable_mode_select = @voting.disable_mode_select?
   end
 
   # (method: PUT/PATCH) Edit voting with params
@@ -65,12 +63,14 @@ class VotingsController < ApplicationController
     authorize @voting
     respond_to do |format|
       if @voting.update(voting_params)
-        logger.debug @voting.saved_changes
+        unless @voting.saved_changes_to_report.empty?
+          @voting.ballots.where(delivered: true).each do |ballot|
+            BallotMailer.with(voting: @voting, ballot: ballot, changes: @voting.saved_changes_to_report).voting_changed.deliver_later
+          end
+        end
         format.html { redirect_to voting_url(@voting, v:@voter, p:@password), notice: "変更を保存しました." }
         format.json { render :show, status: :ok, location: @voting }
       else
-        @delivered_exist = @voting.delivered_exist?
-        @start = @voting.start
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @voting.errors, status: :unprocessable_entity }
       end

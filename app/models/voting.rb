@@ -28,42 +28,20 @@ class Voting < ApplicationRecord
   end
 
 
-  # on authentication
-
-  def get_ballot(params)
-    # Check if given voter is assigned to this voting
-    ballot = self.ballots.find_by(voter: params[:voter])
-    
-    # Authentication is done at this point to prohibit attackers from getting information about assigned voter
-    ballot && ballot.authenticate(params[:password])
-  end
-
-
-  # change limitation
-
-  def disable_mode_select?
-    self.delivered_exist?
-  end
-
-  def disable_choices_change?
-    self.start < Time.current
-  end
-
-  # reading configs
-
-  def get_choices
-    self.choices.split("\n")
-  end
-
-  # instance method because users can set this value in the future.
-  def security_exp_in_minute
-    3
-  end
+  # on delivery by owner
 
   def exp_at_delivery
     if self.mode == "default"
       self.deadline
     end
+  end
+
+
+  # on getting password or redelivery
+
+  # instance method because users can set this value in the future.
+  def security_exp_in_minute
+    3
   end
 
   def exp_at_vote
@@ -73,6 +51,62 @@ class Voting < ApplicationRecord
     when "security"
       Time.current + self.security_exp_in_minute.minutes
     end
+  end
+
+
+  # on vote
+
+  def get_ballot(params)
+    # Check if given voter is assigned to this voting
+    ballot = self.ballots.find_by(voter: params[:voter])
+    
+    # Authentication is done at this point to prohibit attackers from getting information about assigned voter
+    ballot && ballot.authenticate(params[:password])
+  end
+
+  def get_choices
+    self.choices.split("\n")
+  end
+
+
+  # voting config change limitation
+
+  def disable_mode_select?
+    self.delivered_exist?
+  end
+
+  def disable_choices_change?
+    self.delivered_exist? && (self.start < Time.current)
+  end
+
+  def report_change_on_start_and_deadline
+    self.delivered_exist? && (Time.current < self.deadline)
+  end
+
+  def report_change_on_title_and_description
+    self.delivered_exist? && (self.status == "opened")
+  end
+
+  def saved_changes_to_report
+    changes = self.saved_changes
+    result = {}
+    if report_change_on_start_and_deadline
+      if changes[:start]
+        result[:start] = changes[:start]
+      end
+      if changes[:deadline]
+        result[:deadline] = changes[:deadline]
+      end
+    end
+    if report_change_on_title_and_description
+      if changes[:start]
+        result[:start] = changes[:start]
+      end
+      if changes[:description]
+        result[:description] = changes[:description]
+      end
+    end
+    result
   end
 
   
@@ -103,10 +137,6 @@ class Voting < ApplicationRecord
     end
   end
 
-  def delivered_exist?
-    self.ballots.exists?(delivered: true)
-  end
-
 
   def self.modes
     [["デフォルト", "default"], ["セキュリティ", "security"]]
@@ -119,9 +149,13 @@ class Voting < ApplicationRecord
       end
     end
 
+    def delivered_exist?
+      self.ballots.exists?(delivered: true)
+    end
+
     def cannot_change_choices_after_start
       if self.disable_choices_change? && self.will_save_change_to_choices?
-        errors.add(:choices, "投票開始後は選択肢を変更できません")
+        errors.add(:choices, "投票開始後、リンク送信済みの参加者がいる場合は選択肢を変更できません")
       end
     end
 

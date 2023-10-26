@@ -1,5 +1,5 @@
 class BallotMailer < ApplicationMailer
-  before_action :set_voting_title
+  before_action :set_voting_title, except: :voting_changed
   before_action :set_ballot_address, except: :ballot_deleted
   before_action :set_exp_password_url_start_deadline, only: [ :ballot_from_owner, :get_ballot, :renew_ballot ]
 
@@ -19,7 +19,9 @@ class BallotMailer < ApplicationMailer
   end
 
   def voting_changed
+    @voting = params[:voting]
     @changes = params[:changes]
+    @title = @changes[:title] ? @changes[:title][0] : @voting.title
     mail(to: @address, subject: "「#{@title}」の設定が変更されました")
   end
 
