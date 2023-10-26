@@ -30,15 +30,14 @@
       </div>
 
       <div class="mb-4">
-        投票期間
-        <div class="row align-items-center">
-          <%= form.label :start, "開始", class: "form-label col-md-auto" %>
-          <%= form.datetime_field :start, class: "form-control col" %>
-        </div>
-        <div class="row align-items-center">
-          <%= form.label :deadline, "終了", class: "form-label col-md-auto" %>
-          <%= form.datetime_field :deadline, class: "form-control col" %>
-        </div>
+        <%= form.label :start, class: "form-label col-md-auto" %>
+        <%= form.datetime_field :start, class: "form-control col" %>
+        <div class="form-text">時刻まで入力必須</div>
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :deadline, class: "form-label col-md-auto" %>
+        <%= form.datetime_field :deadline, class: "form-control col" %>
         <div class="form-text">時刻まで入力必須</div>
       </div>
 
