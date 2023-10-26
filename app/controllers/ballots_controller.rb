@@ -23,6 +23,7 @@ class BallotsController < ApplicationController
       respond_to do |format|
         if params[:delete_requested]
           if @ballot.update(delete_requested: true)
+            BallotMailer.with(voting: @voting, ballot: @ballot).delete_requested.deliver_later
             format.html { redirect_back_or_to @voting, notice: "取り消し申請を受け付けました." }
             format.json { render :show, status: :ok, location: @ballot }
           else

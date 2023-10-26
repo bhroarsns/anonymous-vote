@@ -24,6 +24,7 @@
                                          POST   /users/unlock(.:format)                                                                           devise/unlocks#create
                             issue_voting POST   /votings/:id/issue(.:format)                                                                      votings#issue
                       deliver_all_voting POST   /votings/:id/deliver_all(.:format)                                                                votings#deliver_all
+                           voters_voting GET    /votings/:id/voters(.:format)                                                                     votings#voters
                                  votings POST   /votings(.:format)                                                                                votings#create
                               new_voting GET    /votings/new(.:format)                                                                            votings#new
                              edit_voting GET    /votings/:id/edit(.:format)                                                                       votings#edit
@@ -32,6 +33,8 @@
                                          PUT    /votings/:id(.:format)                                                                            votings#update
                                          DELETE /votings/:id(.:format)                                                                            votings#destroy
                           deliver_ballot POST   /ballots/:id/deliver(.:format)                                                                    ballots#deliver
+                        redeliver_ballot POST   /ballots/:id/redeliver(.:format)                                                                  ballots#redeliver
+               deliver_from_owner_ballot POST   /ballots/:id/deliver_from_owner(.:format)                                                         ballots#deliver_from_owner
                                  ballots POST   /ballots(.:format)                                                                                ballots#create
                                   ballot PATCH  /ballots/:id(.:format)                                                                            ballots#update
                                          PUT    /ballots/:id(.:format)                                                                            ballots#update

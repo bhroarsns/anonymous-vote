@@ -29,6 +29,12 @@ class BallotMailer < ApplicationMailer
     mail(to: @address, subject: "「#{@title}」の投票権が削除されました")
   end
 
+  def delete_requested
+    @owner = @voting.user.name
+    @owner_address = @voting.user.email
+    mail(to: @owner_address, subject: "「#{@title}」で投票権の取り消し申請がありました")
+  end
+
   private
     def set_voting_title
       @voting = params[:voting]
