@@ -16,7 +16,8 @@
         <%= link_to "Anonymous-vote", root_path, class: "navbar-brand" %>
         <ul class="navbar-nav">
           <% if current_user %>
-            <li class="nav-item"><%= link_to current_user.name, mypage_path, class: "nav-link active" %></li>
+            <li class="nav-item navbar-text navbar-shortcut"><%= current_user.name %></li>
+            <li class="nav-item"><%= link_to "マイページ", mypage_path, class: "nav-link active" %></li>
             <li class="nav-item"><%= link_to "サインアウト", destroy_user_session_path, class: "nav-link active", data: { turbo_method: :delete } %></li>
           <% else %>
             <li class="nav-item"><%= link_to "サインイン", new_user_session_path, class: "nav-link active" %></li>

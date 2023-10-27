@@ -11,7 +11,7 @@
         <% @votings.each do |voting|%>
           <tr>
             <th><%= link_to voting.title, voting_path(voting) %></th>
-            <td><%= voting.description %></td>
+            <td class="table-shortcut"><%= voting.description %></td>
             <td><%= l voting.start, format: :short %></td>
             <td><%= l voting.deadline, format: :short %></td>
           </tr>

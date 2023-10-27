@@ -45,8 +45,7 @@ Rails.application.configure do
     :user_name => ENV['EMAIL_SENDER_ADDRESS'],
     :password => ENV['EMAIL_PASS_KEY'],
     :authentication => :plain,
-    :enable_starttls_auto => true,
-    :tls => true
+    :enable_starttls_auto => true
   }
 
   config.action_mailer.perform_caching = false

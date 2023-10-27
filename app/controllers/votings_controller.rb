@@ -67,6 +67,7 @@ class VotingsController < ApplicationController
         unless @voting.saved_changes_to_report.empty?
           @voting.ballots.where(delivered: true).each do |ballot|
             BallotMailer.with(voting: @voting, ballot: ballot, changes: @voting.saved_changes_to_report).voting_changed.deliver_later
+            sleep(ENV['EMAIL_SLEEP_LENGTH'].to_i)
           end
         end
         format.html { redirect_to voting_url(@voting, v:@voter, p:@password), notice: "変更を保存しました." }
@@ -135,12 +136,10 @@ class VotingsController < ApplicationController
     authorize @voting
 
     @voting.ballots.where(delivered: nil).each.with_index(1) do |ballot, i|
-      if (i % ENV['SLEEP_PERIOD'] == 0)
-        sleep(ENV['SLEEP_LENGTH'])
-      end
       BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
       ballot.update(delivered: true)
       ballot.save
+      sleep(ENV['EMAIL_SLEEP_LENGTH'].to_i)
     end
 
     respond_to do |format|
