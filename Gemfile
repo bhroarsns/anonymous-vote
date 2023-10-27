@@ -49,7 +49,7 @@ gem "devise"
 gem "roo"
 gem 'rails-i18n'
 gem 'cssbundling-rails'
-gem "dotenv"
+gem "dotenv-rails"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

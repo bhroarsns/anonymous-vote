@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "Anonymous-vote Admin <noreply.anonymousvote@gmail.com>"
+  default from: ENV['EMAIL_SENDER_NAME']
   layout "mailer"
 end
