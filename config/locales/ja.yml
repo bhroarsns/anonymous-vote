@@ -42,3 +42,9 @@ ja:
               less_than: "は投票終了時刻より前を指定してください."
             deadline:
               greater_than: "は現在時刻より後を指定してください."
+        ballot:
+          attributes:
+            voter:
+              blank: "のメールアドレスを入力してください."
+              invalid: "のメールアドレスの形式が不正です."
+              taken: "はすでに登録されています."

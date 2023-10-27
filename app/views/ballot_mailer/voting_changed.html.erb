@@ -12,7 +12,7 @@
     <li>説明が「<%= @changes[:description][0] %>」から「<%= @changes[:description][1] %>」に変更になりました。</li>
   <% end %>
   <% if @changes[:start] %>
-    <li>投票開始時刻が<%= l @changes[:start][0], format: :datetime_long %>」から<%= l @changes[:start][1], format: :datetime_long %>に変更になりました。</li>
+    <li>投票開始時刻が<%= l @changes[:start][0], format: :datetime_long %>から<%= l @changes[:start][1], format: :datetime_long %>に変更になりました。</li>
   <% end %>
   <% if @changes[:end] %>
     <li>投票終了時刻が<%= l @changes[:end][0], format: :datetime_long %>から<%= l @changes[:end][1], format: :datetime_long %>に変更になりました。</li>

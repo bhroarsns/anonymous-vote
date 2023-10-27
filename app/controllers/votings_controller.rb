@@ -110,17 +110,10 @@ class VotingsController < ApplicationController
   def issue_single
     authorize @voting
 
-    begin
-      @voting.issue_single_ballot(params[:email])
-      respond_to do |format|
-        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "参加者が追加されました." }
-        format.json { head :no_content }
-      end
-    rescue ActiveRecord::RecordInvalid => _
-      respond_to do |format|
-        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), alert: "#{params[:email]}はすでに参加者に含まれています." }
-        format.json { head :no_content }
-      end
+    flash = @voting.issue_single_ballot(params[:email])
+    respond_to do |format|
+      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), flash }
+      format.json { head :no_content }
     end
   end
 
@@ -128,14 +121,12 @@ class VotingsController < ApplicationController
   def issue
     authorize @voting
     
-    response = @voting.issue_ballots(params[:file])
-    respond_to do |format|
-      format.html {
-        redirect_to voters_voting_path(@voting, v:@voter, p:@password),
-        notice: response[:added] > 0 ? "参加者が#{response[:added]}人追加されました." : nil,
-        alert: response[:removed].any? ? "#{response[:removed].join(', ')}はすでに参加者に含まれています." : nil
-      }
-      format.json { head :no_content }
+    if params[:file]
+      flash = @voting.issue_ballots(params[:file])
+      respond_to do |format|
+        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), flash }
+        format.json { head :no_content }
+      end
     end
   end
 

@@ -18,23 +18,38 @@ class Voting < ApplicationRecord
   # on issuing ballots
 
   def issue_single_ballot(voter)
-    self.ballots.create!(voter: voter, password: Ballot.create_password)
+    begin
+      self.ballots.create!(voter: voter, password: Ballot.create_password)
+      { notice: "参加者が追加されました." }
+    rescue ActiveRecord::RecordInvalid => e
+      { alert: e.record.errors.full_messages.join(' ') }
+    end
   end
 
   def issue_ballots(file)
-    added = 0
-    removed = []
+    num_added = 0
+    num_invalid = 0
+    voters_taken = []
     CSV.foreach(file.path) do |row|
       begin
         self.ballots.create!(voter: row[0], password: Ballot.create_password)
-        added += 1
-      rescue ActiveRecord::RecordInvalid => _
-        removed << row[0]
+        num_added += 1
+      rescue ActiveRecord::RecordInvalid => e
+        # :blank is omitted because :blank is always raised with :invalid.
+        if e.record.errors.of_kind? :voter, :invalid
+          num_invalid += 1
+        elsif e.record.errors.of_kind? :voter, :taken
+          voters_taken << row[0]
+        end
       end
     end
+
+    taken_message = "#{voters_taken.join(', ')}はすでに登録されています." if voters_taken.any?
+    invalid_message = "メールアドレスの形式が不正なため#{num_invalid}件をスキップしました." if (num_invalid > 0)
+
     {
-      added: added,
-      removed: removed
+      notice: num_added > 0 ? "参加者が#{num_added}人追加されました." : nil,
+      alert: (taken_message || invalid_message) ? [taken_message, invalid_message].compact.join(' ') : nil
     }
   end
 

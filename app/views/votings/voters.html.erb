@@ -11,16 +11,16 @@
           <%= form.label :email, "個別に追加", class: "form-label" %>
           <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
           </div>
-          <%= form.submit "参加者を追加", class: "btn btn-primary btn-sm" %>
+          <%= form.submit "個別に追加", class: "btn btn-primary btn-sm" %>
         <% end %>
       </div>
       <div class="mt-3">
         <%= form_with url: issue_voting_path(@voting, v:@voter, p:@password), multipart: true do |form| %>
           <div class="mb-2">
             <%= form.label :file, "一括で追加(CSV)", class: "form-label" %>
-            <%= form.file_field :file, class:"form-control"%>
+            <%= form.file_field :file, accept: '.csv', class:"form-control"%>
           </div>
-          <%= form.submit "参加者を追加", class: "btn btn-primary btn-sm" %>
+          <%= form.submit "CSVから追加", class: "btn btn-primary btn-sm" %>
         <% end %>
       </div>
     </div>
@@ -40,17 +40,15 @@
   <div class="col">
 
     <% if @num_voters > 0 %>
-      <div class="card card-body mb-4">
-        <ul>
-          <% if @num_not_delivered > 0 %>
-            <li>まだリンクを送信していない参加者が<%= @num_not_delivered %>人います。</li>
-          <% else %>
-            <li>参加者全員にリンクを送信済みです。</li>
-          <% end %>
-          <% if @num_delete_requested > 0 %>
-            <li>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>マークの付いている参加者を確認してください。</li>
-          <% end %>
-        </ul>
+      <div class="card card-body my-2">
+        <% if @num_not_delivered > 0 %>
+          <div>まだリンクを送信していない参加者が<%= @num_not_delivered %>人います。</div>
+        <% else %>
+          <div>参加者全員にリンクを送信済みです。</div>
+        <% end %>
+        <% if @num_delete_requested > 0 %>
+          <div>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>マークの付いている参加者を確認してください。</div>
+        <% end %>
       </div>
     <% end %>
 
