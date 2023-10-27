@@ -134,7 +134,10 @@ class VotingsController < ApplicationController
   def deliver_all
     authorize @voting
 
-    @voting.ballots.where(delivered: nil).each do |ballot|
+    @voting.ballots.where(delivered: nil).each_with_index do |ballot, i|
+      if ((i + 1) % ENV['SLEEP_PERIOD'] == 0)
+        sleep(ENV['SLEEP_LENGTH'])
+      end
       BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
       ballot.update(delivered: true)
       ballot.save
