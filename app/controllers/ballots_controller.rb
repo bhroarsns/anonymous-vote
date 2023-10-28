@@ -90,7 +90,7 @@ class BallotsController < ApplicationController
     authorize @ballot
 
     BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
-    @ballot.update(delivered: true)
+    @ballot.update(delivered: true, delete_requested: false)
     if @ballot.save
       respond_to do |format|
         format.html { redirect_back_or_to voters_voting_path(@voting), notice: "送信されました." }

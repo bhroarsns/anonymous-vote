@@ -106,7 +106,7 @@ class Voting < ApplicationRecord
   end
 
   def report_change_on_start_and_deadline
-    self.delivered_exist? && (Time.current < self.deadline)
+    self.delivered_exist?
   end
 
   def report_change_on_title_and_description
@@ -159,7 +159,7 @@ class Voting < ApplicationRecord
   def count_votes
     # Voter (and also owner) should not be able to see the vote counts until the deadline
     if self.deadline < Time.current
-      self.ballots.where(delivered: true).group(:choice).count
+      self.ballots.where(delete_requested: nil).or(self.ballots.where(delete_requested: false)).where(delivered: true).group(:choice).count
     end
   end
 

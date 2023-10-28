@@ -3,6 +3,10 @@ module VotingsHelper
     choice ||= "未投票"
   end
 
+  def description_lines(description)
+    description.split("\n")
+  end
+
   def name_of_ballot(voting)
     if voting.mode == "default"
       "投票用リンク"

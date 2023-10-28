@@ -7,8 +7,17 @@
   -o-text-overflow: ellipsis;
 }
 
+.table-header-shortcut {
+  max-width: 25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+
 .table-shortcut {
-  max-width: 40rem;
+  max-width: 35rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

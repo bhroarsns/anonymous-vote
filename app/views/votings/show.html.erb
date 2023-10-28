@@ -10,7 +10,11 @@
       <dt>投票終了</dt>
         <dd><%= l @deadline %></dd>
       <dt>説明</dt>
-        <dd><%= @description %></dd>
+        <dd>
+          <% description_lines(@description).each do |line| %>
+            <%= line %></br>
+          <% end %>
+        </dd>
       <dt>選択肢</dt>
         <dd>
           <ul>
@@ -123,6 +127,7 @@
   <% when "closed" %>
     <% if @num_not_delivered > 0 %>
       <strong class="text-danger"><%= name_of_ballot(@voting) %>が送信されなかった参加者が<%= @num_not_delivered %>人います。</strong>
+      <strong class="text-danger">投票権の取り消しを申請している参加者が<%= @num_delete_requested %>人います。</strong>
     <% end %>
     <table class="table table-bordered">
       <% @count.each do |choice, num| %>

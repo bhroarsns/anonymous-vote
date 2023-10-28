@@ -2,33 +2,38 @@
 
 <div class="row">
   <div class="col-md-auto">
-
-    <div class="card card-body my-2 container">
-      <h5 class="card-title">1. 参加者を追加</h5>
-      <div class="my-3">
-        <%= form_with url: issue_single_voting_path(@voting, v:@voter, p:@password) do |form| %>
-          <div class="mb-2">
-          <%= form.label :email, "個別に追加", class: "form-label" %>
-          <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
-          </div>
-          <%= form.submit "個別に追加", class: "btn btn-primary btn-sm" %>
-        <% end %>
+    <% if @status == "closed" %>
+      <div class="card card-body my-2">
+        投票が終了しているので参加者の追加、<%= name_of_ballot(@voting) %>の送信はできません。
       </div>
-      <div class="mt-3">
-        <%= form_with url: issue_voting_path(@voting, v:@voter, p:@password), multipart: true do |form| %>
-          <div class="mb-2">
-            <%= form.label :file, "一括で追加(CSV)", class: "form-label" %>
-            <%= form.file_field :file, accept: '.csv', class:"form-control"%>
-          </div>
-          <%= form.submit "CSVから追加", class: "btn btn-primary btn-sm" %>
-        <% end %>
+    <% else %>
+      <div class="card card-body my-2 container">
+        <h5 class="card-title">1. 参加者を追加</h5>
+        <div class="my-3">
+          <%= form_with url: issue_single_voting_path(@voting, v:@voter, p:@password) do |form| %>
+            <div class="mb-2">
+            <%= form.label :email, "個別に追加", class: "form-label" %>
+            <%= form.email_field :email, placeholder: "someone@example.com", class:"form-control" %>
+            </div>
+            <%= form.submit "個別に追加", class: "btn btn-primary btn-sm" %>
+          <% end %>
+        </div>
+        <div class="mt-3">
+          <%= form_with url: issue_voting_path(@voting, v:@voter, p:@password), multipart: true do |form| %>
+            <div class="mb-2">
+              <%= form.label :file, "一括で追加(CSV)", class: "form-label" %>
+              <%= form.file_field :file, accept: '.csv', class:"form-control"%>
+            </div>
+            <%= form.submit "CSVから追加", class: "btn btn-primary btn-sm" %>
+          <% end %>
+        </div>
       </div>
-    </div>
 
-    <div class="card card-body my-2">
-      <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
-      <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
-    </div>
+      <div class="card card-body my-2">
+        <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
+        <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
+      </div>
+    <% end %>
 
     <div class="card card-body my-2">
       <h5 class="card-title">3. 参加者一覧をダウンロード(オプション)</h5>
@@ -47,7 +52,7 @@
           <div>参加者全員にリンクを送信済みです。</div>
         <% end %>
         <% if @num_delete_requested > 0 %>
-          <div>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>マークの付いている参加者を確認してください。</div>
+          <div>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>の付いている参加者を確認し、削除するか、再送信して投票権を復活させてください。</div>
         <% end %>
       </div>
     <% end %>

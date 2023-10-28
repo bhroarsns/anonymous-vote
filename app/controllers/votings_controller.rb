@@ -2,6 +2,7 @@ class VotingsController < ApplicationController
   before_action :sign_in_required, only: [:new]
   # All request except :new have to have this callback to retain :voter and :password when owner opens their own vote link and move to other page
   before_action :set_voting_voter_password, only: %i[ show edit update destroy issue_single issue deliver_all voters ]
+  before_action :deny_when_closed, only: [:issue_single, :issue, :deliver_all]
 
   # (method: GET) Show voting page via votings/{uuid}
   def show
@@ -9,7 +10,7 @@ class VotingsController < ApplicationController
     @owner = @voting.user
 
     unless (current_user == @owner) || @ballot
-      redirect_to root_path, alert: "ページが見つかりません."
+      raise ActionController::RoutingError
     end
 
     @title = @voting.title
@@ -98,6 +99,7 @@ class VotingsController < ApplicationController
     @num_voters = @ballots.count
     @num_not_delivered = @voting.count_not_delivered
     @num_delete_requested = @voting.count_delete_request
+    @status = @voting.status
 
     respond_to do |format|
       format.html
@@ -162,6 +164,15 @@ class VotingsController < ApplicationController
         end
       end
       send_data(csv_data, filename: "voters.csv")
+    end
+
+    def deny_when_closed
+      if @voting.status == "closed"
+        respond_to do |format|
+          format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "投票が終了しているので追加できません."}
+          format.json { head :no_content }
+        end
+      end
     end
 
     # remove choice duplication

@@ -10,11 +10,11 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
-  rescue_from ActionController::RoutingError, with: :render_404
+  # rescue_from ActionController::RoutingError, with: :render_404
   rescue_from Pundit::NotAuthorizedError, with: :render_404
 
   def render_404
-    redirect_to root_path, alert: "ページが見つかりません."
+    render template: 'errors/404', status: 404, layout: 'application', content_type: 'text/html'
   end
 
   private
