@@ -1,24 +1,10 @@
-# README
+# Anonyumous-vote
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Anonymous-voteは、オンラインで匿名かつメールアドレス一つにつき一票を実現する投票システムです。
 
-Things you may want to cover:
+他の媒体で実現できない点として
 
-* Ruby version
+* 匿名投票であり、他の参加者はもちろん主催者にも参加者の投票先は分からないこと
+* 投票進行中に現在の得票状況が見えないこと
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+があります。
