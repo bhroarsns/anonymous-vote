@@ -17,3 +17,6 @@ Anonymous-voteは、オンラインで匿名かつメールアドレス一つに
 + devise(ユーザー認証, 投票者の認証はbcryptのみ)
 + Pundit(認可)
 + Bootstrap使用(cssbundling-rails経由)
+
+## スクリーンショット
+![トップページ](/screenshots/pages/toppage.png)
