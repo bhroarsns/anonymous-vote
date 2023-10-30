@@ -26,7 +26,7 @@ Anonymous-voteは、オンラインで匿名かつメールアドレス一つに
 ![投票画面の画像](/screenshots/pages/voting.png)
 
 ### 投票リンクメール
-![投票リンクメールの画像](/screenshots/email/voter/vote_link_arrived.png)
+![投票リンクメールの画像]()
 
 ### 投票実行画面
 ![投票実行画面の画像](/screenshots/features/voting/voter/voted.png)
