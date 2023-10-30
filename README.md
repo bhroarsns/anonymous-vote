@@ -13,7 +13,7 @@ Anonymous-voteは、オンラインで匿名かつメールアドレス一つに
 + 使用言語: Ruby
 + フレームワーク: Ruby on Rails
 
-### 詳細(gemなど)
+### gemなど
 + devise(ユーザー認証, 投票者の認証はbcryptのみ)
 + Pundit(認可)
 + Bootstrap使用(cssbundling-rails経由)
