@@ -19,4 +19,13 @@ Anonymous-voteは、オンラインで匿名かつメールアドレス一つに
 + Bootstrap使用(cssbundling-rails経由)
 
 ## スクリーンショット
-![トップページ](/screenshots/pages/toppage.png)
+### トップページ
+![トップページの画像](/screenshots/pages/toppage.png)
+
+### 投票画面
+![投票画面の画像](/screenshots/pages/voting.png)
+
+### 参加者管理画面
+![参加者管理画面の画像](/screenshots/pages/voting.png)
+
+その他の画像は/screenshotsを御覧ください.
