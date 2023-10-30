@@ -29,15 +29,15 @@
   </div>
 
   <div class="col">
-    <% if current_user == @voting.user %>
+    <% if current_user == @owner %>
       <div class="card card-body my-2">
         <h5 class="card-title">管理者画面</h5>
         <div class="mb-2">
           <% if @num_not_delivered > 0 %>
-            <strong class="text-danger">まだ<%= name_of_ballot(@voting) %>を送信していない参加者が<%= @num_not_delivered %>人います。</strong>
+            <strong class="text-danger">まだ<%= link_type(@voting) %>を送信していない参加者が<%= @num_not_delivered %>人います。</strong>
           <% end %>
-          <% if @num_delete_requested > 0 %>
-            <strong class="text-danger">投票権の削除申請が<%= @num_delete_requested %>件届いています。</strong>
+          <% if @num_delete_requests > 0 %>
+            <strong class="text-danger">投票権の削除申請が<%= @num_delete_requests %>件届いています。</strong>
           <% end %>
         </div>
         <div class="row mb-4 align-items-center">
@@ -47,7 +47,7 @@
             <% end %>
           </div>
           <div class="col">
-            参加者の追加・削除、<%= name_of_ballot(@voting) %>のメール配布
+            参加者の追加・削除、<%= link_type(@voting) %>のメール配布
           </div>
         </div>
         <div class="row">
@@ -76,17 +76,19 @@
         <% else %>
           <div class="card card-body my-2">
             <h5 class="card-title"><%= @ballot.voter %>さん</h5>
+
+            <% if @choice %>
+              <div class="col">現在の投票先: <%= @choice %></div>
+              <div class="col-md-auto"><%= button_to "投票を取り消す", ballot_url(@ballot, v:@voter, p:@password), method: :put , class: "btn btn-sm btn-danger" %></div>
+            <% else %>
+              <div class="col">まだ投票していません。</div>
+            <% end %>
+
             <% case @status %>
             <% when "not opened" %>
               投票は始まっていません。
             <% when "opened" %>
               <div class="row justify-content-end mb-2 align-items-center">
-                <% if @choice %>
-                  <div class="col">現在の投票先: <%= @choice %></div>
-                  <div class="col-md-auto"><%= button_to "投票を取り消す", ballot_url(@ballot, v:@voter, p:@password), method: :put , class: "btn btn-sm btn-danger" %></div>
-                <% else %>
-                  <div class="col">まだ投票していません。</div>
-                <% end %>
               </div>
               <% if @expired %>
                 <% if @exp %>
@@ -126,8 +128,10 @@
     投票が進行中です.
   <% when "closed" %>
     <% if @num_not_delivered > 0 %>
-      <strong class="text-danger"><%= name_of_ballot(@voting) %>が送信されなかった参加者が<%= @num_not_delivered %>人います。</strong>
-      <strong class="text-danger">投票権の取り消しを申請している参加者が<%= @num_delete_requested %>人います。</strong>
+      <strong class="text-danger"><%= link_type(@voting) %>が送信されなかった参加者が<%= @num_not_delivered %>人います。</strong>
+    <% end %>
+    <% if @num_delete_requests > 0 %>
+      <strong class="text-danger">投票権の取り消しを申請していた参加者が<%= @num_delete_requests %>人います。</strong>
     <% end %>
     <table class="table table-bordered">
       <% @count.each do |choice, num| %>

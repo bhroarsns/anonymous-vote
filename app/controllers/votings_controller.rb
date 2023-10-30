@@ -9,19 +9,15 @@ class VotingsController < ApplicationController
     @ballot = @voting.get_ballot(voter: @voter, password: @password)
     @owner = @voting.user
 
-    unless (current_user == @owner) || @ballot
-      raise ActionController::RoutingError
-    end
-
     @title = @voting.title
     @owner_name = @owner.name
     @start = @voting.start
     @deadline = @voting.deadline
     @description = @voting.description
-    @choices = @voting.get_choices
+    @choices = @voting.choices_array
     @num_voters = @voting.ballots.count
     @num_not_delivered = @voting.count_not_delivered
-    @num_delete_requested = @voting.count_delete_request
+    @num_delete_requests = @voting.count_delete_requests
     @status = @voting.status
     @count = @voting.count_votes
     @not_for_me = params[:not_for_me]
@@ -58,6 +54,7 @@ class VotingsController < ApplicationController
   # (method: GET) Show voting edit page via votings/{uuid}/edit
   def edit
     authorize @voting
+    @locks = @voting.attr_locks
   end
 
   # (method: PUT/PATCH) Edit voting with params
@@ -65,14 +62,16 @@ class VotingsController < ApplicationController
     authorize @voting
     respond_to do |format|
       if @voting.update(voting_params)
-        unless @voting.saved_changes_to_report.empty?
-          @voting.ballots.where(delivered: true).each do |ballot|
-            BallotMailer.with(voting: @voting, ballot: ballot, changes: @voting.saved_changes_to_report).voting_changed.deliver_later
-            sleep(ENV['EMAIL_SLEEP_LENGTH'].to_i)
-          end
-        end
+        @changes_to_report = @voting.saved_changes_to_report
         format.html { redirect_to voting_url(@voting, v:@voter, p:@password), notice: "変更を保存しました." }
         format.json { render :show, status: :ok, location: @voting }
+
+        unless @changes_to_report.nil? || @changes_to_report.empty?
+          @voting.ballots.where(delivered: true, delete_requested: false).each do |ballot|
+            sleep(ENV['SLEEP_EMAIL'].to_i)
+            BallotMailer.with(address: ballot.voter, voting: @voting, changes: @changes_to_report).voting_changed.deliver_later
+          end
+        end
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @voting.errors, status: :unprocessable_entity }
@@ -98,7 +97,7 @@ class VotingsController < ApplicationController
     @ballots = @voting.ballots.order(:delivered, delete_requested: :desc, voter: :asc)
     @num_voters = @ballots.count
     @num_not_delivered = @voting.count_not_delivered
-    @num_delete_requested = @voting.count_delete_request
+    @num_delete_requests = @voting.count_delete_requests
     @status = @voting.status
 
     respond_to do |format|
@@ -113,10 +112,17 @@ class VotingsController < ApplicationController
   def issue_single
     authorize @voting
 
-    flash = @voting.issue_single_ballot(params[:email])
-    respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), flash }
-      format.json { head :no_content }
+    result = @voting.issue_new_ballot(params[:email])
+    if result.errors.any?
+      respond_to do |format|
+        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), alert: result.errors.full_messages.join(' ') }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "参加者が追加されました." }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -125,9 +131,26 @@ class VotingsController < ApplicationController
     authorize @voting
     
     if params[:file]
-      flash = @voting.issue_ballots(params[:file])
+      result = @voting.issue_ballots(params[:file])
+
+      notice_message = result[:succeeded].any? ? "参加者が#{result[:succeeded].count}人追加されました." : nil
+
+      num_invalid = 0
+      voters_taken = []
+      result[:failed].each do |failure|
+        if failure.errors.of_kind? :voter, :invalid
+          num_invalid += 1
+        end
+        if failure.errors.of_kind? :voter, :taken
+          voters_taken << failure[:voter]
+        end
+      end
+      invalid_message = num_invalid > 0 ? "メールアドレスの形式が不正なため#{num_invalid}件をスキップしました." : nil
+      taken_message = voters_taken.any? ? "#{voters_taken.join(', ')}はすでに登録されています." : nil
+      alert_message = (invalid_message || taken_message) ? [invalid_message, taken_message].compact.join(' ') : nil
+
       respond_to do |format|
-        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), flash }
+        format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: notice_message, alert: alert_message }
         format.json { head :no_content }
       end
     end
@@ -137,16 +160,25 @@ class VotingsController < ApplicationController
   def deliver_all
     authorize @voting
 
-    @voting.ballots.where(delivered: nil).each.with_index(1) do |ballot, i|
-      BallotMailer.with(ballot: ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
-      ballot.update(delivered: true)
-      ballot.save
-      sleep(ENV['EMAIL_SLEEP_LENGTH'].to_i)
+    exp = @voting.exp_at_delivery
+    addresses_and_passwords = []
+    @voting.ballots.where(delivered: false).each do |ballot|
+      addresses_and_passwords << ballot.renew_password(exp)
     end
 
     respond_to do |format|
-      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "送信されました."}
+      format.html { redirect_to voters_voting_path(@voting, v:@voter, p:@password), notice: "送信キューに追加しました."}
       format.json { head :no_content }
+    end
+
+    addresses_and_passwords.each do |a_p|
+      sleep(ENV['SLEEP_EMAIL'].to_i)
+      BallotMailer.with(
+        address: a_p[:address],
+        password: a_p[:password],
+        voting: @voting,
+        exp: exp,
+      ).ballot_from_owner.deliver_later
     end
   end
 

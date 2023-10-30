@@ -11,11 +11,26 @@
   <% if @changes[:description] %>
     <li>説明が「<%= @changes[:description][0] %>」から「<%= @changes[:description][1] %>」に変更になりました。</li>
   <% end %>
+  <% if @changes[:choices] %>
+    <li>選択肢が
+      <ul>
+        <% @changes[:choices][0].split("\n").each do |choice| %>
+          <li><%= choice %></li>
+        <% end %>
+      </ul>
+    から
+      <ul>
+        <% @changes[:choices][1].split("\n").each do |choice| %>
+          <li><%= choice %></li>
+        <% end %>
+      </ul>
+    に変更になりました。</li>
+  <% end %>
   <% if @changes[:start] %>
     <li>投票開始時刻が<%= l @changes[:start][0], format: :datetime_long %>から<%= l @changes[:start][1], format: :datetime_long %>に変更になりました。</li>
   <% end %>
-  <% if @changes[:end] %>
-    <li>投票終了時刻が<%= l @changes[:end][0], format: :datetime_long %>から<%= l @changes[:end][1], format: :datetime_long %>に変更になりました。</li>
+  <% if @changes[:deadline] %>
+    <li>投票終了時刻が<%= l @changes[:deadline][0], format: :datetime_long %>から<%= l @changes[:deadline][1], format: :datetime_long %>に変更になりました。</li>
   <% end %>
 </ul>
 

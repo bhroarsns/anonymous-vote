@@ -1,13 +1,13 @@
 <%= @address %>さん
 
-<%= link_to "Anonymous-vote", root_url %>で<%= @owner %>さんが作成した投票「<%= @title %>」の<%= @name_of_ballot %>が届きました.
+<%= link_to "Anonymous-vote", root_url %>で<%= @owner_name %>さんが作成した投票「<%= @title %>」の<%= @link_type %>が届きました.
 
 <% if @exp %>
-  <%= @name_of_ballot %>は<%= link_to "こちら", @url %>です.
+  <%= @link_type %>は<%= link_to "こちら", voting_url(@voting, v: @address, p: @password) %>です.
 <% else %>
-  <%= link_to "こちら", @url %>のリンクからを取得してください.
+  <%= link_to "こちら", voting_url(@voting, v: @address, p: @password) %>のリンクからを取得してください.
 <% end %>
 
 投票期間は<%= l @start, format: :datetime_long %>から<%= l @deadline, format: :datetime_long %>までです.
 
-もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.
+もし心当たりのない場合, お手数ですが<%= link_to "こちら", voting_url(@voting, v: @address, p: @password, not_for_me: true) %>からご連絡ください.

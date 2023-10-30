@@ -1,55 +1,54 @@
 class Voting < ApplicationRecord
   # Voting is responsible for issuing ballots, validating vote choice, counting votes.
+
+  # Attributes
+  #   :user_id => owner of this voting
+  #   :title
+  #   :description => insert </br> at the place of \n when displayed.
+  #   :choices => allowed choices of this voting [represented as text with \n as a partition]
+  #   :start => voters can vote after :start
+  #   :deadline => voters can vote before :deadline
+  #   :mode => determines the type of link owner can deliver [vote link when default] [invitation link when security]
+  #   :config => currently disabled
+
   belongs_to :user
   has_many :ballots, dependent: :destroy
 
-  # Set random uuid as voting id to hide from outsider.
+  # Set random uuid as voting id
   before_create :set_uuid
 
   validates :title, presence: true
   validates :choices, presence: true
   validates :start, comparison: { less_than: :deadline }
   validates :deadline, comparison: { greater_than: Time.current }
+  validates :mode, presence: true, inclusion: { in: %w(default security), message: "モードが正しくありません." }
 
-  # just in case
-  validate :cannot_change_choices_after_start, on: :update
-  validate :cannot_change_mode_when_delivered_exist, on: :update
+  validate :changes_in_attribute_allowed, on: :update
 
   # on issuing ballots
 
-  def issue_single_ballot(voter)
+  def issue_new_ballot(voter)
     begin
-      self.ballots.create!(voter: voter, password: Ballot.create_password)
-      { notice: "参加者が追加されました." }
-    rescue ActiveRecord::RecordInvalid => e
-      { alert: e.record.errors.full_messages.join(' ') }
+      self.ballots.create!(voter: voter, password: Ballot.create_password, delivered: false, delete_requested: false)
+    rescue => e
+      e.record
     end
   end
 
   def issue_ballots(file)
-    num_added = 0
-    num_invalid = 0
-    voters_taken = []
+    succeeded = []
+    failed = []
     CSV.foreach(file.path) do |row|
-      begin
-        self.ballots.create!(voter: row[0], password: Ballot.create_password)
-        num_added += 1
-      rescue ActiveRecord::RecordInvalid => e
-        # :blank is omitted because :blank is always raised with :invalid.
-        if e.record.errors.of_kind? :voter, :invalid
-          num_invalid += 1
-        elsif e.record.errors.of_kind? :voter, :taken
-          voters_taken << row[0]
-        end
+      result = self.issue_new_ballot(row[0])
+      if result.errors.any?
+        failed << result
+      else
+        succeeded << result
       end
     end
-
-    taken_message = "#{voters_taken.join(', ')}はすでに登録されています." if voters_taken.any?
-    invalid_message = "メールアドレスの形式が不正なため#{num_invalid}件をスキップしました." if (num_invalid > 0)
-
     {
-      notice: num_added > 0 ? "参加者が#{num_added}人追加されました." : nil,
-      alert: (taken_message || invalid_message) ? [taken_message, invalid_message].compact.join(' ') : nil
+      succeeded: succeeded,
+      failed: failed
     }
   end
 
@@ -70,7 +69,7 @@ class Voting < ApplicationRecord
     3
   end
 
-  def exp_at_vote
+  def exp_at_redelivery
     case self.mode
     when "default"
       self.deadline
@@ -90,53 +89,61 @@ class Voting < ApplicationRecord
     ballot && ballot.authenticate(params[:password])
   end
 
-  def get_choices
+  def choices_array
     self.choices.split("\n")
   end
 
 
   # voting config change limitation
 
-  def disable_mode_select?
-    self.delivered_exist?
+  def attr_locks
+    {
+      title: false,
+      description: false,
+      choices: false,
+      start: self.delivered_exists? && (self.start_in_database < Time.current) ? { message: "は, 投票が始まっているため変更できません." } : false,
+      deadline: false,
+      mode: self.delivered_exists? ? { message: "は, リンク送信済みの参加者がいるため変更できません." } : false,
+    }
   end
 
-  def disable_choices_change?
-    self.delivered_exist? && (self.start < Time.current)
-  end
-
-  def report_change_on_start_and_deadline
-    self.delivered_exist?
-  end
-
-  def report_change_on_title_and_description
-    self.delivered_exist? && (self.status == "opened")
+  def config_change_reports
+    msg = nil
+    attrs = []
+    if self.delivered_exists?
+      msg = "投票開始・終了時刻及びタイトルの変更はリンク送信済みの参加者にメールで通知されます。"
+      attrs.append(:start, :deadline, :title)
+      if self.started?
+        msg = msg + "\nさらに、投票開始後のため、説明・選択肢の変更もリンク送信済みの参加者に通知されます。"
+        attrs.append(:description, :choices)
+      end
+    end
+    {
+      message: msg,
+      attrs: attrs
+    }
   end
 
   def saved_changes_to_report
     changes = self.saved_changes
+    attrs_to_report = self.config_change_reports[:attrs]
     result = {}
-    if report_change_on_start_and_deadline
-      if changes[:start]
-        result[:start] = changes[:start]
-      end
-      if changes[:deadline]
-        result[:deadline] = changes[:deadline]
+
+    attrs_to_report.each do |attr|
+      if changes[attr]
+        result[attr] = changes[attr]
       end
     end
-    if report_change_on_title_and_description
-      if changes[:start]
-        result[:start] = changes[:start]
-      end
-      if changes[:description]
-        result[:description] = changes[:description]
-      end
-    end
+
     result
   end
 
   
   # get current state of this voting
+
+  def started?
+    self.start < Time.current
+  end
 
   def status
     if Time.current < self.start
@@ -149,20 +156,19 @@ class Voting < ApplicationRecord
   end
 
   def count_not_delivered
-    self.ballots.where(delivered: nil).count
+    self.ballots.where(delivered: false).count
   end
 
-  def count_delete_request
+  def count_delete_requests
     self.ballots.where(delete_requested: true).count
   end
 
   def count_votes
     # Voter (and also owner) should not be able to see the vote counts until the deadline
     if self.deadline < Time.current
-      self.ballots.where(delete_requested: nil).or(self.ballots.where(delete_requested: false)).where(delivered: true).group(:choice).count
+      self.ballots.where(delete_requested: false, delivered: true).group(:choice).count
     end
   end
-
 
   def self.modes
     [["デフォルト", "default"], ["セキュリティ", "security"]]
@@ -175,19 +181,34 @@ class Voting < ApplicationRecord
       end
     end
 
-    def delivered_exist?
+    def delivered_exists?
       self.ballots.exists?(delivered: true)
     end
 
-    def cannot_change_choices_after_start
-      if self.disable_choices_change? && self.will_save_change_to_choices?
-        errors.add(:choices, "投票開始後, リンク送信済みの参加者がいる場合は選択肢を変更できません.")
-      end
+    def voted_exists?
+      self.ballots.where.not(choice: nil).exists?
     end
 
-    def cannot_change_mode_when_delivered_exist
-      if self.disable_mode_select? && self.will_save_change_to_mode?
-        errors.add(:mode, "リンク送信済みの参加者がいる場合, モードは変更できません.")
+    def changes_in_attribute_allowed
+      locks = self.attr_locks
+
+      if locks[:title] && self.will_save_change_to_title?
+        errors.add(:title, locks[:title][:message])
+      end
+      if locks[:description] && self.will_save_change_to_description?
+        errors.add(:description, locks[:description][:message])
+      end
+      if locks[:choices] && self.will_save_change_to_choices?
+        errors.add(:choices, locks[:choices][:message])
+      end
+      if locks[:start] && self.will_save_change_to_start?
+        errors.add(:start, locks[:start][:message])
+      end
+      if locks[:deadline] && self.will_save_change_to_deadline?
+        errors.add(:deadline, locks[:deadline][:message])
+      end
+      if locks[:mode] && self.will_save_change_to_mode?
+        errors.add(:mode, locks[:mode][:message])
       end
     end
 end

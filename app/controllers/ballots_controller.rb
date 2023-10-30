@@ -17,26 +17,39 @@ class BallotsController < ApplicationController
     end
   end
 
-  # voter only
+  # voter only, needs to be before expiration date
   def update
     if authorized_voter?
-      respond_to do |format|
-        if params[:delete_requested]
-          if @ballot.update(delete_requested: true)
-            BallotMailer.with(voting: @voting, ballot: @ballot).delete_requested.deliver_later
+      if params[:delete_requested]
+        if @ballot.update(delete_requested: true)
+          BallotMailer.with(address: @ballot.voter, voting: @voting).delete_requested.deliver_later
+          respond_to do |format|
             format.html { redirect_back_or_to @voting, notice: "取り消し申請を受け付けました." }
             format.json { render :show, status: :ok, location: @ballot }
-          else
-            format.html { render :edit, status: :unprocessable_entity }
+          end
+        else
+          respond_to do |format|
+            format.html { redirect_back_or_to @voting, status: :unprocessable_entity }
             format.json { render json: @ballot.errors, status: :unprocessable_entity }
           end
-        elsif !@ballot.delete_requested
-          if @ballot.update(choice: params[:choice])
-            format.html { redirect_back_or_to @voting, notice: "投票を受け付けました." }
-            format.json { render :show, status: :ok, location: @ballot }
-          else
-            format.html { render :edit, status: :unprocessable_entity }
+        end
+      elsif !@ballot.delete_requested
+        if @ballot.expired?
+          respond_to do |format|
+            format.html { redirect_back_or_to @voting, alert: "リンクが期限切れです." }
             format.json { render json: @ballot.errors, status: :unprocessable_entity }
+          end
+        else
+          if @ballot.update(choice: params[:choice])
+            respond_to do |format|
+              format.html { redirect_back_or_to @voting, notice: "投票を受け付けました." }
+              format.json { render :show, status: :ok, location: @ballot }
+            end
+          else
+            respond_to do |format|
+              format.html { redirect_back_or_to @voting, status: :unprocessable_entity }
+              format.json { render json: @ballot.errors, status: :unprocessable_entity }
+            end
           end
         end
       end
@@ -60,8 +73,9 @@ class BallotsController < ApplicationController
   # voter only
   def deliver
     if authorized_voter?
-      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).get_ballot.deliver_later
-      @ballot.update(delivered: true)
+      exp = @voting.exp_at_redelivery
+      a_p = @ballot.renew_password(exp)
+      BallotMailer.with(address: a_p[:address], password: a_p[:password], exp: exp, voting: @voting).get_ballot.deliver_later
       if @ballot.save
         respond_to do |format|
           format.html { redirect_back_or_to @voting, notice: "発行されました. 数分以内にメールが届きます." }
@@ -74,8 +88,9 @@ class BallotsController < ApplicationController
   # voter only
   def redeliver
     if authorized_voter?
-      BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_vote, voting: @voting).renew_ballot.deliver_later
-      @ballot.update(delivered: true)
+      exp = @voting.exp_at_redelivery
+      a_p = @ballot.renew_password(exp)
+      BallotMailer.with(address: a_p[:address], password: a_p[:password], exp: exp, voting: @voting).renew_ballot.deliver_later
       if @ballot.save
         respond_to do |format|
           format.html { redirect_back_or_to @voting, notice: "再発行されました. 数分以内にメールが届きます." }
@@ -89,8 +104,9 @@ class BallotsController < ApplicationController
   def deliver_from_owner
     authorize @ballot
 
-    BallotMailer.with(ballot: @ballot, exp: @voting.exp_at_delivery, voting: @voting).ballot_from_owner.deliver_later
-    @ballot.update(delivered: true, delete_requested: false)
+    exp = @voting.exp_at_delivery
+    a_p = @ballot.renew_password(exp)
+    BallotMailer.with(address: a_p[:address], password: a_p[:password], exp: exp, voting: @voting).ballot_from_owner.deliver_later
     if @ballot.save
       respond_to do |format|
         format.html { redirect_back_or_to voters_voting_path(@voting), notice: "送信されました." }
@@ -110,6 +126,6 @@ class BallotsController < ApplicationController
     end
 
     def ballot_params
-      params.require(:ballot).permit(:voting_id, :voter, :password_digest, :choice, :delete_requested, :exp)
+      params.require(:ballot).permit(:voting_id, :voter, :password_digest).merge(delivered: false, delete_requested: false)
     end
 end

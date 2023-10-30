@@ -5,7 +5,7 @@
   <div id="mypage.votings" style="overflow: scroll">
     <table class="table" style="white-space: nowrap">
       <thead>
-        <th></th><th>説明</th><th>投票開始</th><th>投票終了</th>
+        <th></th><th>説明</th><th>投票開始</th><th>投票終了</th><th>未送信</th><th>削除申請</th>
       </thead>
       <tbody>
         <% @votings.each do |voting|%>
@@ -14,6 +14,8 @@
             <td class="table-shortcut"><%= voting.description %></td>
             <td><%= l voting.start, format: :short %></td>
             <td><%= l voting.deadline, format: :short %></td>
+            <td><%= voting.count_not_delivered %></td>
+            <td><%= voting.count_delete_requests %></td>
           </tr>
         <% end %>
       </tbody>

@@ -2,8 +2,8 @@
 
 投票「<%= @title %>」の投票リンクを発行しました. リンクの有効期限は<%= l @exp, format: :datetime_long %>です.
 
-投票は<%= link_to "こちら", @url %>から
+投票は<%= link_to "こちら", voting_url(@voting, v: @address, p: @password) %>から
 
 投票期間は<%= l @start, format: :datetime_long %>から<%= l @deadline, format: :datetime_long %>までです.
 
-もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.
+もし心当たりのない場合, お手数ですが<%= link_to "こちら", voting_url(@voting, v: @address, p: @password, not_for_me: true) %>からご連絡ください.

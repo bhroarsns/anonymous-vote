@@ -1,19 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
+  title: "サンプル"
   user: one
-  description: MyText
-  choices: MyText
-  deadline: 2023-10-20 16:41:12
-  mode: MyString
-  config: MyText
+  description: "これはサンプル\nである."
+  choices: "賛成\n反対\n棄権"
+  start: 2023-10-31 00:00:00
+  deadline: 2023-11-01 00:00:00
+  mode: "default"
+  config: ""
 
 two:
-  title: MyString
+  title: "サンプル2"
   user: two
-  description: MyText
-  choices: MyText
-  deadline: 2023-10-20 16:41:12
-  mode: MyString
-  config: MyText
+  description: "これはサンプル2である."
+  choices: "プランA\nプランB\nプランC"
+  start: 2023-10-31 00:00:00
+  deadline: 2023-11-01 00:00:00
+  mode: "default"
+  config: ""

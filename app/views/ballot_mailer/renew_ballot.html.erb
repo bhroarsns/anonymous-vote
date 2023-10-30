@@ -5,7 +5,7 @@
 </p>
 
 <p>
-  投票は<%= link_to "こちら", @url %>から
+  投票は<%= link_to "こちら", voting_url(@voting, v: @address, p: @password) %>から
 </p>
 
 <p>
@@ -13,5 +13,5 @@
 </p>
 
 <p>
-  もし心当たりのない場合, お手数ですが<%= link_to "こちら", @url_not_for_me %>からご連絡ください.
+  もし心当たりのない場合, お手数ですが<%= link_to "こちら", voting_url(@voting, v: @address, p: @password, not_for_me: true) %>からご連絡ください.
 </p>

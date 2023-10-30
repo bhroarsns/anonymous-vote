@@ -4,7 +4,8 @@
   <div class="col-md-auto">
     <% if @status == "closed" %>
       <div class="card card-body my-2">
-        投票が終了しているので参加者の追加、<%= name_of_ballot(@voting) %>の送信はできません。
+        <div>投票が終了しているので参加者の追加、<%= link_type(@voting) %>の送信はできません。</div>
+        <div>参加者の追加、<%= link_type(@voting) %>の送信を行う場合は先に投票期限を延長してください。</div>
       </div>
     <% else %>
       <div class="card card-body my-2 container">
@@ -30,8 +31,8 @@
       </div>
 
       <div class="card card-body my-2">
-        <h5 class="card-title">2. <%= name_of_ballot(@voting) %>を送信</h5>
-        <%= button_to "未送信の#{name_of_ballot(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
+        <h5 class="card-title">2. <%= link_type(@voting) %>を送信</h5>
+        <%= button_to "未送信の#{link_type(@voting)}を一括で送信", deliver_all_voting_path(@voting, v:@voter, p:@password), class: "btn btn-primary btn-sm" %>
       </div>
     <% end %>
 
@@ -51,8 +52,8 @@
         <% else %>
           <div>参加者全員にリンクを送信済みです。</div>
         <% end %>
-        <% if @num_delete_requested > 0 %>
-          <div>投票権の削除申請が<%= @num_delete_requested %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>の付いている参加者を確認し、削除するか、再送信して投票権を復活させてください。</div>
+        <% if @num_delete_requests > 0 %>
+          <div>投票権の削除申請が<%= @num_delete_requests %>件届いています。<i class="bi-exclamation-triangle-fill text-danger"></i>の付いている参加者を確認し、削除するか、再送信して投票権を復活させてください。</div>
         <% end %>
       </div>
     <% end %>
@@ -74,7 +75,7 @@
               <td><% if ballot.delete_requested %><i class="bi-exclamation-triangle-fill text-danger"></i><% end %></td>
               <td><%= ballot.voter %></td>
               <td><% if ballot.delivered %><i class="bi-check-circle-fill text-success" aria-hidden="true"></i>送信済み<% else %>未送信<% end %></td>
-              <td><%= link_to deliver_from_owner_ballot_path(ballot), data: { turbo_method: :post } do%><i class="bi-send" aria-hidden="true"></i><% if ballot.delivered %>再<% end %>送信<% end %></td>
+              <td><% unless @status == "closed" %><%= link_to deliver_from_owner_ballot_path(ballot), data: { turbo_method: :post } do%><i class="bi-send" aria-hidden="true"></i><% if ballot.delivered %>再<% end %>送信<% end %><% end %></td>
               <td>
                 <% if ballot.delivered %>
                   <%= link_to ballot, data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？\nこの参加者に投票権が削除されたことが通達されます。" } do %><i class="bi-trash" aria-hidden="true"></i>削除<% end %>

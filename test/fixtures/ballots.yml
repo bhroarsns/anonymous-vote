@@ -2,14 +2,8 @@
 
 one:
   voting: one
-  voter: MyString
-  password_digest: MyString
-  choice: MyString
-  exp: 2023-10-20 19:46:21
+  voter: "a@example.com"
 
 two:
   voting: two
-  voter: MyString
-  password_digest: MyString
-  choice: MyString
-  exp: 2023-10-20 19:46:21
+  voter: "b@example.com"
