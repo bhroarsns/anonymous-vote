@@ -9,5 +9,13 @@ Anonymous-voteは、オンラインで匿名かつメールアドレス一つに
 
 があります。
 
-* 使用言語 ruby
-* フレームワーク ruby on rails
+## 使用技術
+<dl>
+  <dt>使用言語</dt><dd>ruby</dd>
+  <dt>フレームワーク</dt><dd>ruby on rails</dd>
+</dl>
+
+### 詳細(gemなど)
+<dl>
+  <dt>認証</dt>
+</dl>
